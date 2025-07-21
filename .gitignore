@@ -48,6 +48,7 @@ poetry.lock
 
 # Django migrations
 */migrations/*
+migrations/
 
 # Docker
 docker-compose.override.yml
