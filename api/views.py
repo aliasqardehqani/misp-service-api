@@ -1,3 +1,78 @@
-from django.shortcuts import render
+from rest_framework.decorators import action
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework import status
 
-# Create your views here.
+from asgiref.sync import async_to_sync
+from api.modules.misp_models_caller import MispModulesCaller
+
+from .logs import LoggerService
+
+logger = LoggerService()
+
+class MISPCallAPI(viewsets.ViewSet):
+    def __init__(self):
+        self.misp_class = MispModulesCaller()
+    @action(detail=False, methods=['post'])
+    def add_event(self, request):
+        return async_to_sync(self._add_event)(request)
+    
+    @action(detail=False, methods=['post'])
+    def update_event(self, request):
+        return async_to_sync(self._update_event)(request)
+    
+    @action(detail=False, methods=['post'])
+    def get_event_list(self, request):
+        return async_to_sync(self._get_event_list)(request)
+    
+    
+    
+    async def _add_event(self, request):
+        try:
+            info = request.data.get("info") 
+            analysis = request.data.get("analysis")
+            threat_level_id = request.data.get("threat_level_id")
+            if not info and not analysis and not threat_level_id:
+                logger.error_log("MISPCallAPI", "add_event", None, "The fields are not entered correctly.")
+                return Response({"Error": "Value Error"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            created = await self.misp_class.add_event(info, analysis, threat_level_id)
+            return Response(created, status=status.HTTP_201_CREATED)
+        
+        except Exception as e:
+            logger.error_log("MISPCallAPI", "_add_event", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    async def _update_event(self, request):
+        try:
+            event_id = request.data.get("event_id")
+            info = request.data.get("info") 
+            analysis = request.data.get("analysis")
+            threat_level_id = request.data.get("threat_level_id")
+            
+            if not info and not analysis and not threat_level_id:
+                logger.error_log("MISPCallAPI", "_update_event", None, "The fields are not entered correctly.")
+                return Response({"Error": "Value Error"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            
+            updated = await self.misp_class.update_event(event_id, info, analysis, threat_level_id)
+            return Response({"Message": "Event updated on MISP", "Updated": updated}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error_log("MISPCallAPI", "_update_event", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    async def _get_event_list(self, request):
+        try:
+            event_id = request.data.get("event_id")
+            
+            # if not event_id:
+            #     logger.error_log("MISPCallAPI", "_get_event_list", None, "The fields are not entered correctly.")
+            #     return Response({"Error": "Value Error"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            list_ = await self.misp_class.get_event(event_id)
+            return Response({"Message": "Event Lists", "EventInfo": list_}, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            logger.error_log("MISPCallAPI", "_get_event_list", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
