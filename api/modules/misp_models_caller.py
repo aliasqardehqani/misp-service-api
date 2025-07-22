@@ -1,5 +1,5 @@
 import asyncio
-from pymisp import PyMISP, MISPEvent
+from pymisp import PyMISP, MISPEvent, MISPAttribute
 from django.conf import settings
 from pprint import pprint
 from datetime import datetime
@@ -9,7 +9,7 @@ from api.logs import LoggerService
 logger = LoggerService
 
 
-class MispModulesCaller:
+class MispEventModules:
     def __init__(self):
         self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
 
@@ -22,7 +22,7 @@ class MispModulesCaller:
         try:
             return await asyncio.to_thread(self.misp.users_statistics)
         except Exception as e:
-            logger.error_log("MispModulesCaller", "general_stats", None, f"Unexpected error : {str(e)}")
+            logger.error_log("MispEventModules", "general_stats", None, f"Unexpected error : {str(e)}")
             return
 
     async def add_event(self, info: str, analysis: int, threat_level_id: int):
@@ -38,7 +38,7 @@ class MispModulesCaller:
             created_event = await asyncio.to_thread(self.misp.add_event, event, pythonify=True)
             return {"Message": "Event created on MISP", "Created": created_event}
         except Exception as e:
-            logger.error_log("MispModulesCaller", "add_event", None, f"Unexpected error : {str(e)}")
+            logger.error_log("MispEventModules", "add_event", None, f"Unexpected error : {str(e)}")
             return
 
     async def update_event(self, event_id: int, info: str, analysis: int, threat_level_id: int):
@@ -56,11 +56,11 @@ class MispModulesCaller:
                 updated_event = await asyncio.to_thread(self.misp.update_event, event, pythonify=True)
                 return {"Message": "Event updated on MISP", "update": updated_event}
             else:
-                logger.error_log("MispModulesCaller", "update_event", None, f"Event with ID {event_id} not found.")
+                logger.error_log("MispEventModules", "update_event", None, f"Event with ID {event_id} not found.")
                 return {"Error": f"Event with ID {event_id} not found." }
 
         except Exception as e:
-            logger.error_log("MispModulesCaller", "update_event", None, f"Unexpected error : {str(e)}")
+            logger.error_log("MispEventModules", "update_event", None, f"Unexpected error : {str(e)}")
             return
 
     async def delete_event(self, event_id: int):
@@ -68,7 +68,7 @@ class MispModulesCaller:
             report = await asyncio.to_thread(self.misp.delete_event, event_id)
             return report
         except Exception as e:
-            logger.error_log("MispModulesCaller", "delete_event", None, f"Unexpected error : {str(e)}")
+            logger.error_log("MispEventModules", "delete_event", None, f"Unexpected error : {str(e)}")
             return
         
     async def get_event(self, event_id):
@@ -82,5 +82,84 @@ class MispModulesCaller:
             )
             return report
         except Exception as e:
-            logger.error_log("MispModulesCaller", "delete_event", None, f"Unexpected error : {str(e)}")
+            logger.error_log("MispEventModules", "delete_event", None, f"Unexpected error : {str(e)}")
             return
+    async def events_list(self):
+        try:
+            events = self.misp.events(pythonify=False)
+            return events
+        
+        except Exception as e:
+            logger.error_log("MispEventModules", "events_list", None, f"Unexpected error : {str(e)}")
+            return
+        
+class MispAttibutesModules:
+    def __init__(self):
+        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+
+        self.event = MISPEvent()
+        self.attr = MISPAttribute()
+        self.tehran_tz = ZoneInfo('Asia/Tehran')
+        self.utc_now = datetime.now(tz=self.tehran_tz).timestamp()
+        self.today = datetime.now().strftime("%Y-%m-%d")
+    
+    async def attributes_list(self):
+        try:
+            attr = self.misp.attributes(pythonify=False)
+            return attr
+        except Exception as e:
+            logger.error_log("MispEventModules", "events_list", None, f"Unexpected error : {str(e)}")
+            return
+
+
+    async def add_attr(self, event_id, value, category, type_val, first_seen, last_seen, disable_correlation=False):
+        try:
+            first_seen_ts = int(datetime.strptime(first_seen, "%Y-%m-%d").timestamp())
+            last_seen_ts = int(datetime.strptime(last_seen, "%Y-%m-%d").timestamp())
+            timestamp_ts = int(datetime.now().timestamp()) 
+
+            attribute = self.attr
+            attribute.from_dict(
+                value=value,
+                category=category,
+                type=type_val,
+                timestamp=timestamp_ts,
+                first_seen=first_seen_ts,
+                last_seen=last_seen_ts,
+                disable_correlation=disable_correlation
+            )
+
+            attr = self.misp.add_attribute(
+                event=event_id,
+                attribute=attribute,
+                pythonify=True,
+                break_on_duplicate=True
+            )
+            return attr
+        except Exception as e:
+            logger.error_log("MispEventModules", "add_attr", None, f"Unexpected error : {str(e)}")
+            return
+
+
+
+    async def search_misp(self, controller: str, kwargs: None):
+        """
+        Perform a flexible search in MISP with optional parameters.
+
+        :param controller: One of 'events', 'attributes', or 'objects'.
+        :param kwargs: Optional search filters (e.g. type_attribute, category, tags, etc.).
+        :return: Search result from MISP, or None if an error occurs.
+        """
+        if controller not in ['events', 'attributes', 'objects']:
+            raise ValueError("Controller must be one of: 'events', 'attributes', 'objects'.")
+
+        if kwargs is None:
+            kwargs = {}
+
+        try:
+            result = self.misp.search(controller=controller, **kwargs)
+            return result
+        except Exception as e:
+            self.logger.error(f"Search failed: {str(e)}")
+            return None
+
