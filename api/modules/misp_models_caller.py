@@ -66,7 +66,6 @@ class MispModulesCaller:
     async def delete_event(self, event_id: int):
         try:
             report = await asyncio.to_thread(self.misp.delete_event, event_id)
-            pprint(report)
             return report
         except Exception as e:
             logger.error_log("MispModulesCaller", "delete_event", None, f"Unexpected error : {str(e)}")

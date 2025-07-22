@@ -25,6 +25,10 @@ class MISPCallAPI(viewsets.ViewSet):
     def get_event_list(self, request):
         return async_to_sync(self._get_event_list)(request)
     
+    @action(detail=False, methods=['post'])
+    def delete_event(self, request):
+        return async_to_sync(self._delete_event)(request)
+    
     
     
     async def _add_event(self, request):
@@ -65,14 +69,25 @@ class MISPCallAPI(viewsets.ViewSet):
         try:
             event_id = request.data.get("event_id")
             
-            # if not event_id:
-            #     logger.error_log("MISPCallAPI", "_get_event_list", None, "The fields are not entered correctly.")
-            #     return Response({"Error": "Value Error"}, status=status.HTTP_400_BAD_REQUEST)
+            if not event_id:
+                logger.error_log("MISPCallAPI", "_get_event_list", None, "The fields are not entered correctly.")
+                return Response({"Error": "Value Error"}, status=status.HTTP_400_BAD_REQUEST)
             
             list_ = await self.misp_class.get_event(event_id)
             return Response({"Message": "Event Lists", "EventInfo": list_}, status=status.HTTP_200_OK)
         
         except Exception as e:
             logger.error_log("MISPCallAPI", "_get_event_list", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    async def _delete_event(self, request):
+        try:
+            event_id = request.data.get("event_id")
+            
+            deleted_obj = await self.misp_class.delete_event(event_id=event_id)
+            return Response({"Message": f"Event {event_id} deleted .", "Deleted OBJ": deleted_obj}, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            logger.error_log("MISPCallAPI", "_delete_event", None, f"Unexpected error: {str(e)}")
             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
