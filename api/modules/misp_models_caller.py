@@ -1,5 +1,5 @@
 import asyncio
-from pymisp import PyMISP, MISPEvent
+from pymisp import PyMISP, MISPEvent, MISPAttribute
 from django.conf import settings
 from pprint import pprint
 from datetime import datetime
@@ -92,3 +92,74 @@ class MispEventModules:
         except Exception as e:
             logger.error_log("MispEventModules", "events_list", None, f"Unexpected error : {str(e)}")
             return
+        
+class MispAttibutesModules:
+    def __init__(self):
+        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+
+        self.event = MISPEvent()
+        self.attr = MISPAttribute()
+        self.tehran_tz = ZoneInfo('Asia/Tehran')
+        self.utc_now = datetime.now(tz=self.tehran_tz).timestamp()
+        self.today = datetime.now().strftime("%Y-%m-%d")
+    
+    async def attributes_list(self):
+        try:
+            attr = self.misp.attributes(pythonify=False)
+            return attr
+        except Exception as e:
+            logger.error_log("MispEventModules", "events_list", None, f"Unexpected error : {str(e)}")
+            return
+
+
+    async def add_attr(self, event_id, value, category, type_val, first_seen, last_seen, disable_correlation=False):
+        try:
+            first_seen_ts = int(datetime.strptime(first_seen, "%Y-%m-%d").timestamp())
+            last_seen_ts = int(datetime.strptime(last_seen, "%Y-%m-%d").timestamp())
+            timestamp_ts = int(datetime.now().timestamp()) 
+
+            attribute = self.attr
+            attribute.from_dict(
+                value=value,
+                category=category,
+                type=type_val,
+                timestamp=timestamp_ts,
+                first_seen=first_seen_ts,
+                last_seen=last_seen_ts,
+                disable_correlation=disable_correlation
+            )
+
+            attr = self.misp.add_attribute(
+                event=event_id,
+                attribute=attribute,
+                pythonify=True,
+                break_on_duplicate=True
+            )
+            return attr
+        except Exception as e:
+            logger.error_log("MispEventModules", "add_attr", None, f"Unexpected error : {str(e)}")
+            return
+
+
+
+    async def search_misp(self, controller: str, kwargs: None):
+        """
+        Perform a flexible search in MISP with optional parameters.
+
+        :param controller: One of 'events', 'attributes', or 'objects'.
+        :param kwargs: Optional search filters (e.g. type_attribute, category, tags, etc.).
+        :return: Search result from MISP, or None if an error occurs.
+        """
+        if controller not in ['events', 'attributes', 'objects']:
+            raise ValueError("Controller must be one of: 'events', 'attributes', 'objects'.")
+
+        if kwargs is None:
+            kwargs = {}
+
+        try:
+            result = self.misp.search(controller=controller, **kwargs)
+            return result
+        except Exception as e:
+            self.logger.error(f"Search failed: {str(e)}")
+            return None
+
