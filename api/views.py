@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from asgiref.sync import async_to_sync
-from api.modules.misp_models_caller import MispModulesCaller
+from api.modules.misp_models_caller import MispEventModules
 
 from .logs import LoggerService
 
@@ -12,7 +12,12 @@ logger = LoggerService()
 
 class MISPCallAPI(viewsets.ViewSet):
     def __init__(self):
-        self.misp_class = MispModulesCaller()
+        self.misp_class = MispEventModules()
+    
+    @action(detail=False, methods=['post'])
+    def events_list(self, request):
+        return async_to_sync(self._events_list)(request)
+    
     @action(detail=False, methods=['post'])
     def add_event(self, request):
         return async_to_sync(self._add_event)(request)
@@ -41,7 +46,7 @@ class MISPCallAPI(viewsets.ViewSet):
                 return Response({"Error": "Value Error"}, status=status.HTTP_400_BAD_REQUEST)
             
             created = await self.misp_class.add_event(info, analysis, threat_level_id)
-            return Response(created, status=status.HTTP_201_CREATED)
+            return Response({"Message": "Event Created", "Data": created}, status=status.HTTP_201_CREATED)
         
         except Exception as e:
             logger.error_log("MISPCallAPI", "_add_event", None, f"Unexpected error: {str(e)}")
@@ -60,7 +65,7 @@ class MISPCallAPI(viewsets.ViewSet):
             
             
             updated = await self.misp_class.update_event(event_id, info, analysis, threat_level_id)
-            return Response({"Message": "Event updated on MISP", "Updated": updated}, status=status.HTTP_200_OK)
+            return Response({"Message": "Event updated on MISP", "Data": updated}, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error_log("MISPCallAPI", "_update_event", None, f"Unexpected error: {str(e)}")
             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -74,7 +79,7 @@ class MISPCallAPI(viewsets.ViewSet):
                 return Response({"Error": "Value Error"}, status=status.HTTP_400_BAD_REQUEST)
             
             list_ = await self.misp_class.get_event(event_id)
-            return Response({"Message": "Event Lists", "EventInfo": list_}, status=status.HTTP_200_OK)
+            return Response({"Message": "Event Lists", "Data": list_}, status=status.HTTP_200_OK)
         
         except Exception as e:
             logger.error_log("MISPCallAPI", "_get_event_list", None, f"Unexpected error: {str(e)}")
@@ -85,9 +90,17 @@ class MISPCallAPI(viewsets.ViewSet):
             event_id = request.data.get("event_id")
             
             deleted_obj = await self.misp_class.delete_event(event_id=event_id)
-            return Response({"Message": f"Event {event_id} deleted .", "Deleted OBJ": deleted_obj}, status=status.HTTP_200_OK)
+            return Response({"Message": f"Event {event_id} deleted .", "Data": deleted_obj}, status=status.HTTP_200_OK)
         
         except Exception as e:
             logger.error_log("MISPCallAPI", "_delete_event", None, f"Unexpected error: {str(e)}")
             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _events_list(self, request):
+        try:
+            list_ = await self. misp_class.events_list()
+            return Response({"Message": f"Event Lists.", "Data": list_}, status=status.HTTP_200_OK)
         
+        except Exception as e:
+            logger.error_log("MISPCallAPI", "_delete_event", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -9,7 +9,7 @@ from api.logs import LoggerService
 logger = LoggerService
 
 
-class MispModulesCaller:
+class MispEventModules:
     def __init__(self):
         self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
 
@@ -22,7 +22,7 @@ class MispModulesCaller:
         try:
             return await asyncio.to_thread(self.misp.users_statistics)
         except Exception as e:
-            logger.error_log("MispModulesCaller", "general_stats", None, f"Unexpected error : {str(e)}")
+            logger.error_log("MispEventModules", "general_stats", None, f"Unexpected error : {str(e)}")
             return
 
     async def add_event(self, info: str, analysis: int, threat_level_id: int):
@@ -38,7 +38,7 @@ class MispModulesCaller:
             created_event = await asyncio.to_thread(self.misp.add_event, event, pythonify=True)
             return {"Message": "Event created on MISP", "Created": created_event}
         except Exception as e:
-            logger.error_log("MispModulesCaller", "add_event", None, f"Unexpected error : {str(e)}")
+            logger.error_log("MispEventModules", "add_event", None, f"Unexpected error : {str(e)}")
             return
 
     async def update_event(self, event_id: int, info: str, analysis: int, threat_level_id: int):
@@ -56,11 +56,11 @@ class MispModulesCaller:
                 updated_event = await asyncio.to_thread(self.misp.update_event, event, pythonify=True)
                 return {"Message": "Event updated on MISP", "update": updated_event}
             else:
-                logger.error_log("MispModulesCaller", "update_event", None, f"Event with ID {event_id} not found.")
+                logger.error_log("MispEventModules", "update_event", None, f"Event with ID {event_id} not found.")
                 return {"Error": f"Event with ID {event_id} not found." }
 
         except Exception as e:
-            logger.error_log("MispModulesCaller", "update_event", None, f"Unexpected error : {str(e)}")
+            logger.error_log("MispEventModules", "update_event", None, f"Unexpected error : {str(e)}")
             return
 
     async def delete_event(self, event_id: int):
@@ -68,7 +68,7 @@ class MispModulesCaller:
             report = await asyncio.to_thread(self.misp.delete_event, event_id)
             return report
         except Exception as e:
-            logger.error_log("MispModulesCaller", "delete_event", None, f"Unexpected error : {str(e)}")
+            logger.error_log("MispEventModules", "delete_event", None, f"Unexpected error : {str(e)}")
             return
         
     async def get_event(self, event_id):
@@ -82,5 +82,13 @@ class MispModulesCaller:
             )
             return report
         except Exception as e:
-            logger.error_log("MispModulesCaller", "delete_event", None, f"Unexpected error : {str(e)}")
+            logger.error_log("MispEventModules", "delete_event", None, f"Unexpected error : {str(e)}")
+            return
+    async def events_list(self):
+        try:
+            events = self.misp.events(pythonify=False)
+            return events
+        
+        except Exception as e:
+            logger.error_log("MispEventModules", "events_list", None, f"Unexpected error : {str(e)}")
             return
