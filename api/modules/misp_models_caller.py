@@ -206,3 +206,96 @@ class MISPSearchModles:
             logger.error(f"Search failed: {str(e)}")
             return None
 
+class MispEventReportModules:
+    def __init__(self):
+        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+        
+    async def get_event_reports(self, report_id):
+        try:
+            obj = self.misp.get_event_reports(report_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispEventReportModules", "get_event_reports", None, f"Unexpected error : {str(e)}")
+            return
+
+    async def get_event_reports(self, report_id):
+        try:
+            obj = self.misp.get_event_reports(report_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispEventReportModules", "get_event_report", None, f"Unexpected error : {str(e)}")
+            return
+
+    async def update_event_report(self, report_data, report_id):
+        try:
+            obj = self.misp.update_event_report(report_data, report_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispEventReportModules", "update_event_report", None, f"Unexpected error : {str(e)}")
+            return
+        
+    async def delete_event_report(self, report_id):
+        try:
+            obj = self.misp.delete_event_report(report_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispEventReportModules", "delete_event_report", None, f"Unexpected error : {str(e)}")
+            return
+
+class MispTagsModules:
+    def __init__(self):
+        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+        
+    async def add_tag(self, tag_report):
+        try:
+            obj = self.misp.add_tag(tag_report, pythonify=False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispTagsModules", "add_tag", None, f"Unexpected error : {str(e)}")
+            return
+        
+    async def update_tag(self, tag_report, tags_id):
+        try:
+            obj = self.misp.update_tag(tag_report, tags_id, pythonify=False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispTagsModules", "update_tag", None, f"Unexpected error : {str(e)}")
+            return
+        
+    async def delete_tag(self, tag_id):
+        try:
+            obj = self.misp.delete_tag(tag_id)
+            return obj
+        except Exception as e:
+            logger.error_log("MispTagsModules", "delete_tag", None, f"Unexpected error : {str(e)}")
+            return
+        
+    async def list_tag(self):
+        try:
+            obj = self.misp.tags(False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispTagsModules", "list_tag", None, f"Unexpected error : {str(e)}")
+            return
+        
+    async def get_tag(self, tag_id):
+        try:
+            obj = self.misp.get_tag(tag_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispTagsModules", "get_tag", None, f"Unexpected error : {str(e)}")
+            return
+        
+# class MispObjectsModules:
+#     def __init__(self):
+#         self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+        
+#     async def add_obj(self, event_id, obj_data):
+#         try:
+#             obj = self.misp.add_object(event_id, obj_data, False, False)
+#             return obj
+#         except Exception as e:
+#             logger.error_log("MispObjectsModules", "add_obj", None, f"Unexpected error : {str(e)}")
+#             return
+        
+        

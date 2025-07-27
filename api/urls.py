@@ -14,15 +14,34 @@ urlpatterns = [
     path('update-attr/', MISPAttibutesAPI.as_view({'post': 'update_attribute'}), name='update-attr'),
     path('delete-attr/', MISPAttibutesAPI.as_view({'post': 'delete_attribute'}), name='delete-attr'),
     path('get-attr/', MISPAttibutesAPI.as_view({'post': 'get_attribute'}), name='get-attr'),
-
     
-    
-    
-
-
     # ----------------------------------------Search-API`s------------------------------------------
     path('search/', MISPSearchAPI.as_view({'post': 'search'}), name='search'),
+    
+    # ----------------------------------------Search-API`s------------------------------------------
+    path("add-report/", MISPEventReportAPI.as_view({'post': 'add_event_report'}), name='add-event-report'),
+    path("get-reports/", MISPEventReportAPI.as_view({'post': 'get_event_reports'}), name='get-event-reports'),
+    path("update-report/", MISPEventReportAPI.as_view({'post': 'update_event_report'}), name='update-event-report'),
+    path("delete-report/", MISPEventReportAPI.as_view({'post': 'delete_event_report'}), name='delete-event-report'),
+    
+    # ----------------------------------------Tags-API`s---------------------------------------------
+    path('add-tag/', MISPTagsAPI.as_view({'post': 'add_tag'}), name='add-tag'),
+    path('update-tag/', MISPTagsAPI.as_view({'post': 'update_tag'}), name='update-tag'),
+    path('delete-tag/', MISPTagsAPI.as_view({'post': 'delete_tag'}), name='delete-tag'),
+    path('list-tag/', MISPTagsAPI.as_view({'post': 'list_tag'}), name='list-tag'),
+    path('get-tag/', MISPTagsAPI.as_view({'post': 'get_tag'}), name='get-tag'),
+
+    # ----------------------------------------Objects-API`s------------------------------------------
+    # path('add-obj/', MISPObjectsAPI.as_view({'post': 'add_obj'}), name='add-obj'),
+
 ]
+
+
+
+
+
+
+
 
 
 
