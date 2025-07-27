@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from asgiref.sync import async_to_sync
-from api.modules.misp_models_caller import MispEventModules, MispAttibutesModules, MISPSearchModles
+from api.modules.misp_models_caller import MispEventModules, MispAttibutesModules, MISPSearchModles, MispEventReportModules
 
 from .logs import LoggerService
 
@@ -217,11 +217,6 @@ class MISPAttibutesAPI(viewsets.ViewSet):
             logger.error_log("MISPAttibutesAPI", "_get_attribute", None, f"Unexpected error: {str(e)}")
             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
    
-
-
-
-
-
 class MISPSearchAPI(viewsets.ViewSet):
     def __init__(self, **kwargs):
         self.misp_class = MISPSearchModles()
@@ -241,3 +236,78 @@ class MISPSearchAPI(viewsets.ViewSet):
             logger.error_log("MISPAttibutesAPI", "_search_misp", None, f"Unexpected error: {str(e)}")
             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
+class MISPEventReportAPI(viewsets.ViewSet):
+    def __init__(self):
+        self.misp_class = MispEventReportModules()
+    
+    @action(detail=False, methods=['post'])
+    def add_event_report(self, request):
+        return async_to_sync(self._add_event_report)(request)
+
+    @action(detail=False, methods=['post'])
+    def get_event_reports(self, request):
+        return async_to_sync(self._get_event_reports)(request)
+
+    @action(detail=False, methods=['post'])
+    def update_event_report(self, request):
+        return async_to_sync(self._update_event_report)(request)
+
+    @action(detail=False, methods=['post'])
+    def delete_event_report(self, request):
+        return async_to_sync(self._delete_event_report)(request)
+
+
+    async def _add_event_report(self, request):
+        try:
+            event_id = request.data.get('event_id')
+            if not event_id:
+                logger.error_log("MISPEventReposrtAPI", "_add_event_report", None, f"Value error from body")
+            report_data = {
+                "name": request.data.get("name"),
+                "content": request.data.get("content"),
+                "timestamp": request.data.get("timestamp"),
+                "deleted": request.data.get("deleted")
+            }
+            obj = await self.misp_class.add_event_report(event_id, report_data)
+            return Response({"Message": f"Event Report Added", "Data": obj}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error_log("MISPEventReposrtAPI", "_add_event_report", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _get_event_reports(self, request):
+        try:
+            report_id = request.data.get('report_id')
+            obj = await self.misp_class.get_event_reports(report_id)
+            return Response({"Message": f"List of reports", "Data": obj}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error_log("MISPEventReposrtAPI", "_add_event_report", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    async def _update_event_report(self, request):
+        try:
+            report_id = request.data.get('report_id')
+            if not report_id:
+                logger.error_log("MISPEventReposrtAPI", "_add_event_report", None, f"Value error from body")
+            report_data = {
+                "name": request.data.get("name"),
+                "content": request.data.get("content"),
+                "timestamp": request.data.get("timestamp"),
+                "deleted": request.data.get("deleted")
+            }
+            obj = await self.misp_class.update_event_report(report_id, report_data)
+            return Response({"Message": f"Report updated", "Data": obj}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error_log("MISPEventReposrtAPI", "_update_event_report", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _delete_event_report(self, request):
+        try:
+            report_id = request.data.get('report_id')
+            if not report_id:
+                logger.error_log("MISPEventReposrtAPI", "_add_event_report", None, f"Value error from body")
+            obj = await self.misp_class.delete_event_report(report_id)
+            return Response({"Message": f"Report deleted", "Data": obj}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error_log("MISPEventReposrtAPI", "_delete_event_report", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

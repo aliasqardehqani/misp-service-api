@@ -206,3 +206,40 @@ class MISPSearchModles:
             logger.error(f"Search failed: {str(e)}")
             return None
 
+class MispEventReportModules:
+    def __init__(self):
+        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+        
+    async def get_event_reports(self, report_id):
+        try:
+            obj = self.misp.get_event_reports(report_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispEventReportModules", "get_event_reports", None, f"Unexpected error : {str(e)}")
+            return
+
+    async def get_event_reports(self, report_id):
+        try:
+            obj = self.misp.get_event_reports(report_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispEventReportModules", "get_event_report", None, f"Unexpected error : {str(e)}")
+            return
+
+    async def update_event_report(self, report_data, report_id):
+        try:
+            obj = self.misp.update_event_report(report_data, report_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispEventReportModules", "update_event_report", None, f"Unexpected error : {str(e)}")
+            return
+        
+    async def delete_event_report(self, report_id):
+        try:
+            obj = self.misp.delete_event_report(report_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispEventReportModules", "delete_event_report", None, f"Unexpected error : {str(e)}")
+            return
+
+
