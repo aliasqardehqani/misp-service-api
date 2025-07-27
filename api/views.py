@@ -2,9 +2,16 @@ from rest_framework.decorators import action
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework import status
-
+from datetime import datetime
 from asgiref.sync import async_to_sync
-from api.modules.misp_models_caller import MispEventModules, MispAttibutesModules, MISPSearchModles, MispEventReportModules
+from api.modules.misp_models_caller import (
+    MispEventModules,
+    MispAttibutesModules,
+    MISPSearchModles,
+    MispEventReportModules,
+    MispTagsModules,
+    MispObjectsModules
+)
 
 from .logs import LoggerService
 
@@ -310,4 +317,127 @@ class MISPEventReportAPI(viewsets.ViewSet):
         except Exception as e:
             logger.error_log("MISPEventReposrtAPI", "_delete_event_report", None, f"Unexpected error: {str(e)}")
             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class MISPTagsAPI(viewsets.ViewSet):
+    def __init__(self):
+        self.misp_class = MispTagsModules()
+    
+    @action(detail=False, methods=['post'])
+    def add_tag(self, request):
+        return async_to_sync(self._add_tag)(request)
+    
+    @action(detail=False, methods=['post'])
+    def update_tag(self, request):
+        return async_to_sync(self._update_tag)(request)
+
+    @action(detail=False, methods=['post'])
+    def delete_tag(self, request):
+        return async_to_sync(self._delete_tag)(request)
+
+    @action(detail=False, methods=['post'])
+    def list_tag(self, request):
+        return async_to_sync(self._list_tag)(request)
+
+    @action(detail=False, methods=['post'])
+    def get_tag(self, request):
+        return async_to_sync(self._get_tag)(request)
+
+    async def _add_tag(self, request):
+        try:
+            report_data = {
+                "name": request.data.get("name"),
+                "colour": request.data.get("colour"),
+                "relationship_type": request.data.get("relationship_type"),
+                "local": request.data.get("local")
+            }
+            obj = await self.misp_class.add_tag(report_data)
+            return Response({"Message": f"Event Tag Added", "Data": obj}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error_log("MISPTagsAPI", "_add_tag", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    async def _update_tag(self, request):
+        try:
+            tag_id = request.data.get('tag_id')
+            if not tag_id:
+                logger.error_log("MISPTagsAPI", "_update_tag", None, f"Value error from body")
+            report_data = {
+                "name": request.data.get("name"),
+                "content": request.data.get("content"),
+                "timestamp": request.data.get("timestamp"),
+                "deleted": request.data.get("deleted")
+            }
+            obj = await self.misp_class.update_tag(report_data, tag_id)
+            return Response({"Message": f"Event Tag Updated", "Data": obj}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error_log("MISPTagsAPI", "_update_tag", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    async def _delete_tag(self, request):
+        try:
+            tag_id = request.data.get('tag_id')
+            if not tag_id:
+                logger.error_log("MISPTagsAPI", "_delete_tag", None, f"Value error from body")
+            obj = await self.misp_class.delete_tag(tag_id)
+            return Response({"Message": f"Event Tag Deleted", "Data": obj}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error_log("MISPTagsAPI", "_delete_tag", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    async def _list_tag(self, request):
+        try:
+            obj = await self.misp_class.list_tag()
+            return Response({"Message": f"Event Tags List", "Data": obj}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error_log("MISPTagsAPI", "_list_tag", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    async def _get_tag(self, request):
+        try:
+            tag_id = request.data.get('tag_id')
+            if not tag_id:
+                logger.error_log("MISPTagsAPI", "_get_tag", None, f"Value error from body")
+                
+            obj = await self.misp_class.get_tag(tag_id)
+            return Response({"Message": f"Event Tag with ID", "Data": obj}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error_log("MISPTagsAPI", "_get_tag", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# class MISPObjectsAPI(viewsets.ViewSet):
+#     def __init__(self):
+#         self.misp_class = MispObjectsModules()
+        
+#     def timstamp_to_date(self, time_data):
+#         self.dt_object = datetime.fromtimestamp(time_data)
+
+#     @action(detail=False, methods=['post'])
+#     def add_obj(self, request):
+#         return async_to_sync(self._add_obj)(request)
+    
+#     async def _add_obj(self, request):
+#         try:
+#             event_id = request.data.get('event_id')
+#             if not event_id:
+#                 logger.error_log("MISPObjectsAPI", "_add_obj", None, f"Value error from body")
+            
+#             report_data = {
+#                 "name": request.get("name") ,
+#                 "meta-category": request.get("meta-category") ,
+#                 "description": request.get("description") ,
+#                 "template_uuid": request.get("template_uuid") ,
+#                 "template_version": request.get("template_version") ,
+#                 "uuid": request.get("uuid") ,
+#                 "timestamp": request.get("timestamp") ,
+#                 "comment": request.get("comment") ,
+#                 "first_seen": request.get("first_seen") ,
+#                 "last_seen": request.get("last_seen") ,
+#                 "deleted": request.get("deleted") ,
+#             }
+#             obj = await self.misp_class.add_obj(report_data)
+#             return Response({"Message": f"Event Objects Added", "Data": obj}, status=status.HTTP_200_OK)
+#         except Exception as e:
+#             logger.error_log("MISPObjectsAPI", "_add_obj", None, f"Unexpected error: {str(e)}")
+#             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 
