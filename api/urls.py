@@ -11,7 +11,18 @@ urlpatterns = [
     # ---------------------------------------Attribute-API`s----------------------------------------
     path('list-attr/', MISPAttibutesAPI.as_view({'post': 'attributes_list'}), name='list-attr'),
     path('add-attr/', MISPAttibutesAPI.as_view({'post': 'add_attr'}), name='add-attr'),
-    path('search/', MISPAttibutesAPI.as_view({'post': 'search'}), name='search'),
+    path('update-attr/', MISPAttibutesAPI.as_view({'post': 'update_attribute'}), name='update-attr'),
+    path('delete-attr/', MISPAttibutesAPI.as_view({'post': 'delete_attribute'}), name='delete-attr'),
+    path('get-attr/', MISPAttibutesAPI.as_view({'post': 'get_attribute'}), name='get-attr'),
+
+    
+    
+    
+
+
+    # ----------------------------------------Search-API`s------------------------------------------
+    path('search/', MISPSearchAPI.as_view({'post': 'search'}), name='search'),
 ]
+
 
 

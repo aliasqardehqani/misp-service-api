@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from asgiref.sync import async_to_sync
-from api.modules.misp_models_caller import MispEventModules, MispAttibutesModules
+from api.modules.misp_models_caller import MispEventModules, MispAttibutesModules, MISPSearchModles
 
 from .logs import LoggerService
 
@@ -116,12 +116,18 @@ class MISPAttibutesAPI(viewsets.ViewSet):
     @action(detail=False, methods=['post'])
     def add_attr(self, request):
         return async_to_sync(self._add_attr)(request)
-    
+
     @action(detail=False, methods=['post'])
-    def search(self, request):
-        return async_to_sync(self._search_misp)(request)
-    
-    
+    def update_attribute(self, request):
+        return async_to_sync(self._update_attribute)(request)
+    @action(detail=False, methods=['post'])
+    def delete_attribute(self, request):
+        return async_to_sync(self._delete_attribute)(request)
+
+    @action(detail=False, methods=['post'])
+    def get_attribute(self, request):
+        return async_to_sync(self._get_attribute)(request)
+
     
     async def _attributes_list(self, request):
         try:
@@ -155,6 +161,75 @@ class MISPAttibutesAPI(viewsets.ViewSet):
             logger.error_log("MISPAttibutesAPI", "_add_attr", None, f"Unexpected error: {str(e)}")
             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
+    async def _update_attribute(self, request):
+        try:
+
+            if not request.data:
+                logger.error_log("MISPAttibutesAPI", "_add_attr", None, "The fields are not entered correctly.")
+                return Response({"Error": "Value Error"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            attribute_id = request.data.get("attribute_id")
+            value = request.data.get("value")
+            category = request.data.get("category")
+            type_val = request.data.get("type")
+            first_seen = request.data.get("first_seen")
+            last_seen = request.data.get("last_seen")
+            disable_correlation = request.data.get("disable_correlation")
+            
+
+            updated = await self.misp_class.update_attribute(attribute_id, value, category, type_val, first_seen, last_seen, disable_correlation)
+            return Response({"Message": "Attribute Updated", "Data": updated}, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            logger.error_log("MISPAttibutesAPI", "_update_attribute", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    async def _delete_attribute(self, request):
+        try:
+
+            if not request.data:
+                logger.error_log("MISPAttibutesAPI", "_delete_attribute", None, "The fields are not entered correctly.")
+                return Response({"Error": "Value Error"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            attribute_id = request.data.get("attribute_id")
+
+            deleted = await self.misp_class.delete_attribute(attribute_id)
+            return Response({"Message": "Attribute deleted", "Data": deleted}, status=status.HTTP_204_NO_CONTENT)
+        
+        except Exception as e:
+            logger.error_log("MISPAttibutesAPI", "_delete_attribute", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    async def _get_attribute(self, request):
+        try:
+
+            if not request.data:
+                logger.error_log("MISPAttibutesAPI", "_get_attribute", None, "The fields are not entered correctly.")
+                return Response({"Error": "Value Error"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            attribute_id = request.data.get("attribute_id")
+
+
+            obj = await self.misp_class.get_attribute(attribute_id)
+            return Response({"Message": "Event Objects", "Data": obj}, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            logger.error_log("MISPAttibutesAPI", "_get_attribute", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+   
+
+
+
+
+
+class MISPSearchAPI(viewsets.ViewSet):
+    def __init__(self, **kwargs):
+        self.misp_class = MISPSearchModles()
+        
+    @action(detail=False, methods=['post'])
+    def search(self, request):
+        return async_to_sync(self._search_misp)(request)
+    
     async def _search_misp(self, request):
         try:
             controller = request.data.get("controller")

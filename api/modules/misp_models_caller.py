@@ -111,7 +111,6 @@ class MispAttibutesModules:
             logger.error_log("MispEventModules", "events_list", None, f"Unexpected error : {str(e)}")
             return
 
-
     async def add_attr(self, event_id, value, category, type_val, first_seen, last_seen, disable_correlation=False):
         try:
             first_seen_ts = int(datetime.strptime(first_seen, "%Y-%m-%d").timestamp())
@@ -140,7 +139,51 @@ class MispAttibutesModules:
             logger.error_log("MispEventModules", "add_attr", None, f"Unexpected error : {str(e)}")
             return
 
+    async def update_attribute(self, attribute_id, value, category, type_val, first_seen, last_seen, disable_correlation=False):
+        try:
+            first_seen_ts = int(datetime.strptime(first_seen, "%Y-%m-%d").timestamp())
+            last_seen_ts = int(datetime.strptime(last_seen, "%Y-%m-%d").timestamp())
+            timestamp_ts = int(datetime.now().timestamp()) 
 
+            attribute = self.attr
+            attribute.from_dict(
+                value=value,
+                category=category,
+                type=type_val,
+                timestamp=timestamp_ts,
+                first_seen=first_seen_ts,
+                last_seen=last_seen_ts,
+                disable_correlation=disable_correlation
+            )
+
+            attr = self.misp.update_attribute(
+                attribute=attribute,
+                attribute_id=attribute_id,
+                pythonify=True,
+            )
+            return attr
+        except Exception as e:
+            logger.error_log("MispEventModules", "update_attr", None, f"Unexpected error : {str(e)}")
+            return
+        
+    async def delete_attribute(self, attribute_id):
+        try:
+            deleted_obj = self.misp.delete_attribute(attribute=attribute_id, hard= False)
+            return deleted_obj
+        except Exception as e:
+            logger.error_log("MispEventModules", "delete_attr", None, f"Unexpected error : {str(e)}")
+
+    async def get_attribute(self, attribute_id):
+        try:
+            obj = self.misp.get_attribute(attribute=attribute_id, pythonify=False)
+            return obj
+        except Exception as e:
+            logger("MispAttibutesModules", "get_attribute", None, f"Unexpected error : {str(e)}")
+            return
+
+class MISPSearchModles:
+    def __init__(self):
+        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
 
     async def search_misp(self, controller: str, kwargs: None):
         """
@@ -160,6 +203,6 @@ class MispAttibutesModules:
             result = self.misp.search(controller=controller, **kwargs)
             return result
         except Exception as e:
-            self.logger.error(f"Search failed: {str(e)}")
+            logger.error(f"Search failed: {str(e)}")
             return None
 
