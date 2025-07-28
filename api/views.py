@@ -13,7 +13,8 @@ from api.modules.misp_models_caller import (
     MispObjectsModules, 
     MispFeedsModules,
     MispAttributeProposalsModules, 
-    MispPublishManagerModules
+    MispPublishManagerModules,
+    MispUserManagementModules
 )
 
 from .logs import LoggerService
@@ -698,3 +699,82 @@ class MISPAttributeProposalAPI(viewsets.ViewSet):
             logger.error_log("MISPAttributeProposalAPI", "_delete_attribute_proposal", None, f"Unexpected error: {str(e)}")
             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+class MISPUserManagementAPI(viewsets.ViewSet):
+    def __init__(self):
+        self.misp_class = MispUserManagementModules()
+
+
+    @action(detail=False, methods=['post'])
+    def add_user(self, request):
+        return async_to_sync(self._add_user)(request)
+
+    @action(detail=False, methods=['post'])
+    def update_user(self, request):
+        return async_to_sync(self._update_user)(request)
+
+    @action(detail=False, methods=['post'])
+    def get_user(self, request):
+        return async_to_sync(self._gget_user)(request)
+
+    @action(detail=False, methods=['post'])
+    def users(self, request):
+        return async_to_sync(self._users)(request)
+
+    @action(detail=False, methods=['post'])
+    def delete_user(self, request):
+        return async_to_sync(self._delete_user)(request)
+
+
+    async def _add_user(self, request):
+        try:
+            user_obj = request.data.get('User')
+            obj = await self.misp_class.add_user(request.data)
+            return Response({"Message": "User Added Success", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPUserManagementAPI", "_add_user", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _update_user(self, request):
+        try:
+            from pymisp import MISPObject
+            user_id = request.data.get('user_id')
+            user_obj = request.data.get('user_obj')
+            obj = await self.misp_class.update_user(user_id, user_obj.to_dict())
+            return Response({"Message": "User Updated Success", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPUserManagementAPI", "_update_user", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _get_user(self, request):
+        try:
+            user_id = request.data.get('user_id')
+            obj = await self.misp_class.get_user(user_id)
+            return Response({"Message": "Get User by ID", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPUserManagementAPI", "_gget_user", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _users(self, request):
+        try:
+            search = request.data.get('search')
+            organisation = request.data.get('organisation')
+            obj = await self.misp_class.users(search, organisation)
+            return Response({"Message": "Users list", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPUserManagementAPI", "_users", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _delete_user(self, request):
+        try:
+            user_id = request.data.get('user_id')
+            obj = await self.misp_class.delete_user(user_id)
+            return Response({"Message": "User Deleted By ID", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPUserManagementAPI", "_delete_user", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

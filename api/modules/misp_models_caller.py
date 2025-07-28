@@ -429,5 +429,50 @@ class MispAttributeProposalsModules:
             logger.error_log("MispAttributeProposalsModules", "delete_attribute_proposal", None, f"Unexpected error : {str(e)}")
             return    
         
+class MispUserManagementModules:
+    def __init__(self):
+        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
         
+    async def add_user(self, user_obj):
+        try:
+            obj = self.misp.add_user(user_obj, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispUserManagementModules", "add_user", None, f"Unexpected error : {str(e)}")
+            return
+        
+    async def update_user(self, user_id, user_obj):
+        try:
+            obj = self.misp.update_user(user_obj, user_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispUserManagementModules", "update_user", None, f"Unexpected error : {str(e)}")
+            return
+
+    async def get_user(self, user_id):
+        try:
+            obj = self.misp.get_user(user_id, False, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispUserManagementModules", "get_user", None, f"Unexpected error : {str(e)}")
+            return
+
+    async def users(self, search: None, organisation: None):
+        try:
+            
+            obj = self.misp.users(search, organisation, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispUserManagementModules", "users", None, f"Unexpected error : {str(e)}")
+            return      
+        
+        
+    async def delete_user(self, user_id):
+        try:
+            obj = self.misp.delete_user(user_id)
+            return obj
+        except Exception as e:
+            logger.error_log("MispUserManagementModules", "delete_user", None, f"Unexpected error : {str(e)}")
+            return
+ 
         
