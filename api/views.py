@@ -404,40 +404,107 @@ class MISPTagsAPI(viewsets.ViewSet):
             logger.error_log("MISPTagsAPI", "_get_tag", None, f"Unexpected error: {str(e)}")
             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# class MISPObjectsAPI(viewsets.ViewSet):
-#     def __init__(self):
-#         self.misp_class = MispObjectsModules()
-        
-#     def timstamp_to_date(self, time_data):
-#         self.dt_object = datetime.fromtimestamp(time_data)
+class MISPObjectsAPI(viewsets.ViewSet):
+    def __init__(self):
+        self.misp_class = MispObjectsModules()
 
-#     @action(detail=False, methods=['post'])
-#     def add_obj(self, request):
-#         return async_to_sync(self._add_obj)(request)
-    
-#     async def _add_obj(self, request):
-#         try:
-#             event_id = request.data.get('event_id')
-#             if not event_id:
-#                 logger.error_log("MISPObjectsAPI", "_add_obj", None, f"Value error from body")
-            
-#             report_data = {
-#                 "name": request.get("name") ,
-#                 "meta-category": request.get("meta-category") ,
-#                 "description": request.get("description") ,
-#                 "template_uuid": request.get("template_uuid") ,
-#                 "template_version": request.get("template_version") ,
-#                 "uuid": request.get("uuid") ,
-#                 "timestamp": request.get("timestamp") ,
-#                 "comment": request.get("comment") ,
-#                 "first_seen": request.get("first_seen") ,
-#                 "last_seen": request.get("last_seen") ,
-#                 "deleted": request.get("deleted") ,
-#             }
-#             obj = await self.misp_class.add_obj(report_data)
-#             return Response({"Message": f"Event Objects Added", "Data": obj}, status=status.HTTP_200_OK)
-#         except Exception as e:
-#             logger.error_log("MISPObjectsAPI", "_add_obj", None, f"Unexpected error: {str(e)}")
-#             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+    def timstamp_to_date(self, timestamp):
+        dt_object = datetime.fromtimestamp(timestamp)
+        return dt_object.strftime("%Y-%m-%d")
+
+    @action(detail=False, methods=['post'])
+    def add_obj(self, request):
+        return async_to_sync(self._add_obj)(request)
+
+    @action(detail=False, methods=['post'])
+    def update_obj(self, request):
+        return async_to_sync(self._update_obj)(request)
+
+    @action(detail=False, methods=['post'])
+    def get_obj(self, request):
+        return async_to_sync(self._get_obj)(request)
+
+    @action(detail=False, methods=['post'])
+    def delete_obj(self, request):
+        return async_to_sync(self._delete_obj)(request)
+
+
+    async def _add_obj(self, request):
+        try:
+            from pymisp import MISPObject
+            event_id = request.data.get('event_id')
+            name = request.data.get("name")
+
+            if not event_id or not name:
+                return Response({"error": "Missing event_id or name"}, status=status.HTTP_400_BAD_REQUEST)
+
+            misp_obj = MISPObject(name)
+            misp_obj.comment = request.data.get("comment", "")
+            misp_obj.first_seen = self.timstamp_to_date(request.data.get("first_seen"))
+            misp_obj.last_seen = self.timstamp_to_date(request.data.get("last_seen"))
+
+            attributes = request.data.get("attributes", [])
+            for attr in attributes:
+                object_relation = attr.get("object_relation")
+                value = attr.get("value")
+                if object_relation and value is not None:
+                    misp_obj.add_attribute(object_relation, value)
+
+            obj = await self.misp_class.add_obj(event_id, misp_obj.to_dict())
+            return Response({"Message": "Event Objects Added", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPObjectsAPI", "_add_obj", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _update_obj(self, request):
+        try:
+            from pymisp import MISPObject
+            obj_id = request.data.get('obj_id')
+            name = request.data.get("name")
+
+            if not obj_id or not name:
+                return Response({"error": "Missing obj_id or name"}, status=status.HTTP_400_BAD_REQUEST)
+
+            misp_obj = MISPObject(name)
+            misp_obj.comment = request.data.get("comment", "")
+            misp_obj.first_seen = self.timstamp_to_date(request.data.get("first_seen"))
+            misp_obj.last_seen = self.timstamp_to_date(request.data.get("last_seen"))
+
+            attributes = request.data.get("attributes", [])
+            for attr in attributes:
+                object_relation = attr.get("object_relation")
+                value = attr.get("value")
+                if object_relation and value is not None:
+                    misp_obj.add_attribute(object_relation, value)
+
+            obj = await self.misp_class.update_obj(obj_id, misp_obj.to_dict())
+            return Response({"Message": "Event Objects Updated", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPObjectsAPI", "_update_obj", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _get_obj(self, request):
+        try:
+            obj_id = request.data.get('obj_id')
+            obj = await self.misp_class.get_obj(obj_id)
+            return Response({"Message": "Event Objects By ID", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPObjectsAPI", "_get_obj", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _delete_obj(self, request):
+        try:
+            obj_id = request.data.get('obj_id')
+            obj = await self.misp_class.delete_obj(obj_id)
+            return Response({"Message": "Event Objects Deleted By ID", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPObjectsAPI", "_delete_obj", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
 

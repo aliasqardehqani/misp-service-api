@@ -32,7 +32,10 @@ urlpatterns = [
     path('get-tag/', MISPTagsAPI.as_view({'post': 'get_tag'}), name='get-tag'),
 
     # ----------------------------------------Objects-API`s------------------------------------------
-    # path('add-obj/', MISPObjectsAPI.as_view({'post': 'add_obj'}), name='add-obj'),
+    path('add-obj/', MISPObjectsAPI.as_view({'post': 'add_obj'}), name='add-obj'),
+    path('update-obj/', MISPObjectsAPI.as_view({'post': 'update_obj'}), name='update-obj'),
+    path('get-obj/', MISPObjectsAPI.as_view({'post': 'get_obj'}), name='get-obj'),
+    path('delete-obj/', MISPObjectsAPI.as_view({'post': 'delete_obj'}), name='delete-obj'),
 
 ]
 
