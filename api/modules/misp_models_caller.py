@@ -321,3 +321,51 @@ class MispObjectsModules:
         except Exception as e:
             logger.error_log("MispObjectsModules", "delete_obj", None, f"Unexpected error : {str(e)}")
             return
+        
+class MispFeedsModules:
+    def __init__(self):
+        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+        
+    async def add_feed(self, feed_obj):
+        try:
+            obj = self.misp.add_feed(feed_obj, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispObjectsModules", "add_feed", None, f"Unexpected error : {str(e)}")
+            return
+        
+    async def update_feed(self, feed_id, feed_obj):
+        try:
+            obj = self.misp.update_feed(feed_obj, feed_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispObjectsModules", "update_feed", None, f"Unexpected error : {str(e)}")
+            return
+
+    async def get_feed(self, feed_id):
+        try:
+            obj = self.misp.get_feed(feed_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispObjectsModules", "get_feed", None, f"Unexpected error : {str(e)}")
+            return
+
+    async def feeds(self):
+        try:
+            obj = self.misp.feeds( False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispObjectsModules", "feeds", None, f"Unexpected error : {str(e)}")
+            return      
+        
+        
+    async def delete_feed(self, feed_id):
+        try:
+            obj = self.misp.delete_feed(feed_id)
+            return obj
+        except Exception as e:
+            logger.error_log("MispObjectsModules", "delete_feed", None, f"Unexpected error : {str(e)}")
+            return
+ 
+ 
+ 

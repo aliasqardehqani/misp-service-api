@@ -36,7 +36,13 @@ urlpatterns = [
     path('update-obj/', MISPObjectsAPI.as_view({'post': 'update_obj'}), name='update-obj'),
     path('get-obj/', MISPObjectsAPI.as_view({'post': 'get_obj'}), name='get-obj'),
     path('delete-obj/', MISPObjectsAPI.as_view({'post': 'delete_obj'}), name='delete-obj'),
-
+    
+    # ----------------------------------------Feeds-API`s--------------------------------------------
+    path('add-feed/', MISPFeedsAPI.as_view({'post': 'add_feed'}), name='add-feed'),
+    path('update-feed/', MISPFeedsAPI.as_view({'post': 'update_feed'}), name='update-feed'),
+    path('delete-feed/', MISPFeedsAPI.as_view({'post': 'delete_feed'}), name='delete-feed'),
+    path('list-feed/', MISPFeedsAPI.as_view({'post': 'feeds'}), name='list-feed'),
+    path('get-feed/', MISPFeedsAPI.as_view({'post': 'get_feed'}), name='get-feed'),
 ]
 
 

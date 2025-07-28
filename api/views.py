@@ -10,7 +10,8 @@ from api.modules.misp_models_caller import (
     MISPSearchModles,
     MispEventReportModules,
     MispTagsModules,
-    MispObjectsModules
+    MispObjectsModules, 
+    MispFeedsModules
 )
 
 from .logs import LoggerService
@@ -505,6 +506,81 @@ class MISPObjectsAPI(viewsets.ViewSet):
             logger.error_log("MISPObjectsAPI", "_delete_obj", None, f"Unexpected error: {str(e)}")
             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class MISPFeedsAPI(viewsets.ViewSet):
+    def __init__(self):
+        self.misp_class = MispFeedsModules()
 
+
+    @action(detail=False, methods=['post'])
+    def add_feed(self, request):
+        return async_to_sync(self._add_feed)(request)
+
+    @action(detail=False, methods=['post'])
+    def update_feed(self, request):
+        return async_to_sync(self._update_feed)(request)
+
+    @action(detail=False, methods=['post'])
+    def get_feed(self, request):
+        return async_to_sync(self._get_feed)(request)
+
+    @action(detail=False, methods=['post'])
+    def feeds(self, request):
+        return async_to_sync(self._feeds)(request)
+
+    @action(detail=False, methods=['post'])
+    def delete_feed(self, request):
+        return async_to_sync(self._delete_feed)(request)
+
+
+    async def _add_feed(self, request):
+        try:
+            feed_obj = request.data.get('feed_obj')
+            obj = await self.misp_class.add_feed(feed_obj)
+            return Response({"Message": "Feed Added", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPFeedsAPI", "_add_feed", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _update_feed(self, request):
+        try:
+            from pymisp import MISPObject
+            feed_id = request.data.get('feed_id')
+            feed_obj = request.data.get('feed_obj')
+            obj = await self.misp_class.update_feed(feed_id, feed_obj.to_dict())
+            return Response({"Message": "Feed Updated", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPFeedsAPI", "_update_feed", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _get_feed(self, request):
+        try:
+            feed_id = request.data.get('feed_id')
+            obj = await self.misp_class.get_feed(feed_id)
+            return Response({"Message": "Event Feed object", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPFeedsAPI", "_get_feed", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _delete_feed(self, request):
+        try:
+            feed_id = request.data.get('feed_id')
+            obj = await self.misp_class.delete_feed(feed_id)
+            return Response({"Message": "Event Objects Deleted By ID", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPObjectsAPI", "_delete_feed", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _feeds(self, request):
+        try:
+            obj = await self.misp_class.feeds()
+            return Response({"Message": "Feeds list", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPFeedsAPI", "_feeds", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
