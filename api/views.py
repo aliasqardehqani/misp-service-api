@@ -11,7 +11,8 @@ from api.modules.misp_models_caller import (
     MispEventReportModules,
     MispTagsModules,
     MispObjectsModules, 
-    MispFeedsModules
+    MispFeedsModules,
+    MispAttributeProposalsModules
 )
 
 from .logs import LoggerService
@@ -571,7 +572,7 @@ class MISPFeedsAPI(viewsets.ViewSet):
             return Response({"Message": "Event Objects Deleted By ID", "Data": obj}, status=status.HTTP_200_OK)
 
         except Exception as e:
-            logger.error_log("MISPObjectsAPI", "_delete_feed", None, f"Unexpected error: {str(e)}")
+            logger.error_log("MISPFeedsAPI", "_delete_feed", None, f"Unexpected error: {str(e)}")
             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     async def _feeds(self, request):
@@ -583,4 +584,81 @@ class MISPFeedsAPI(viewsets.ViewSet):
             logger.error_log("MISPFeedsAPI", "_feeds", None, f"Unexpected error: {str(e)}")
             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class MISPAttributeProposalAPI(viewsets.ViewSet):
+    def __init__(self):
+        self.misp_class = MispAttributeProposalsModules()
+
+
+    @action(detail=False, methods=['post'])
+    def attribute_proposals(self, request):
+        return async_to_sync(self._attribute_proposals)(request)
+
+    @action(detail=False, methods=['post'])
+    def get_attribute_proposal(self, request):
+        return async_to_sync(self._get_attribute_proposal)(request)
+
+    @action(detail=False, methods=['post'])
+    def add_attribute_proposal(self, request):
+        return async_to_sync(self._add_attribute_proposal)(request)
+
+    @action(detail=False, methods=['post'])
+    def update_attribute_proposal(self, request):
+        return async_to_sync(self._update_attribute_proposal)(request)
+
+    @action(detail=False, methods=['post'])
+    def delete_attribute_proposal(self, request):
+        return async_to_sync(self._delete_attribute_proposal)(request)
+
+
+    async def _add_attribute_proposal(self, request):
+        try:
+            event_id = request.data.get("event_id")
+            attr_prp_obj = request.data.get('attr_prp_obj')
+            obj = await self.misp_class.add_attribute_proposal(event_id, attr_prp_obj)
+            return Response({"Message": "Proposal Added", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPAttributeProposalAPI", "_add_attribute_proposal", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _get_attribute_proposal(self, request):
+        try:
+            from pymisp import MISPObject
+            attr_prp_id = request.data.get('attr_prp_id')
+            obj = await self.misp_class.get_attribute_proposal(attr_prp_id)
+            return Response({"Message": "Proposal Get By ID", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPAttributeProposalAPI", "get_attribute_proposal", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _attribute_proposals(self, request):
+        try:
+            obj = await self.misp_class.attribute_proposals()
+            return Response({"Message": "Attribute Proposals List", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPAttributeProposalAPI", "_attribute_proposals", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _update_attribute_proposal(self, request):
+        try:
+            attr_prp_id = request.data.get("attr_prp_id")
+            attr_prp_obj = request.data.get('attr_prp_obj')
+            obj = await self.misp_class.update_attribute_proposal(attr_prp_id, attr_prp_obj)            
+            return Response({"Message": "Attribute Proposal Updated By ID", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPAttributeProposalAPI", "_update_attribute_proposal", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _delete_attribute_proposal(self, request):
+        try:
+            attr_prp_id = request.data.get('attr_prp_id')
+            obj = await self.misp_class.delete_attribute_proposal(attr_prp_id)
+            return Response({"Message": "Proposal Deleted by ID", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPAttributeProposalAPI", "_delete_attribute_proposal", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
