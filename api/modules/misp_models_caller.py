@@ -286,16 +286,38 @@ class MispTagsModules:
             logger.error_log("MispTagsModules", "get_tag", None, f"Unexpected error : {str(e)}")
             return
         
-# class MispObjectsModules:
-#     def __init__(self):
-#         self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+class MispObjectsModules:
+    def __init__(self):
+        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
         
-#     async def add_obj(self, event_id, obj_data):
-#         try:
-#             obj = self.misp.add_object(event_id, obj_data, False, False)
-#             return obj
-#         except Exception as e:
-#             logger.error_log("MispObjectsModules", "add_obj", None, f"Unexpected error : {str(e)}")
-#             return
+    async def add_obj(self, event_id, misp_object):
+        try:
+            obj = self.misp.add_object(event_id, misp_object, False, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispObjectsModules", "add_obj", None, f"Unexpected error : {str(e)}")
+            return
         
+    async def update_obj(self, obj_id, misp_object):
+        try:
+            obj = self.misp.update_object(misp_object, obj_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispObjectsModules", "update_obj", None, f"Unexpected error : {str(e)}")
+            return
+
+    async def get_obj(self, obj_id):
+        try:
+            obj = self.misp.get_object(obj_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispObjectsModules", "get_obj", None, f"Unexpected error : {str(e)}")
+            return
         
+    async def delete_obj(self, obj_id):
+        try:
+            obj = self.misp.delete_object(obj_id)
+            return obj
+        except Exception as e:
+            logger.error_log("MispObjectsModules", "delete_obj", None, f"Unexpected error : {str(e)}")
+            return
