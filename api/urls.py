@@ -43,7 +43,19 @@ urlpatterns = [
     path('delete-feed/', MISPFeedsAPI.as_view({'post': 'delete_feed'}), name='delete-feed'),
     path('list-feed/', MISPFeedsAPI.as_view({'post': 'feeds'}), name='list-feed'),
     path('get-feed/', MISPFeedsAPI.as_view({'post': 'get_feed'}), name='get-feed'),
+
+    # ----------------------------------------Proposal-API`s--------------------------------------------
+    path('add-attr-proposal/', MISPAttributeProposalAPI.as_view({'post': 'add_attribute_proposal'}), name='add-attr-proposal'),
+    path('update-proposal/', MISPAttributeProposalAPI.as_view({'post': 'update_attribute_proposal'}), name='update-proposal'),
+    path('delete-proposal/', MISPAttributeProposalAPI.as_view({'post': 'delete_attribute_proposal'}), name='delete-proposal'),
+    path('list-proposal/', MISPAttributeProposalAPI.as_view({'post': 'attribute_proposals'}), name='list-proposal'),
+    path('get-proposal/', MISPAttributeProposalAPI.as_view({'post': 'get_attribute_proposal'}), name='get-proposal'),
+
 ]
+
+
+
+
 
 
 

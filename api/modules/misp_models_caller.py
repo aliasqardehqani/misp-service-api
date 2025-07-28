@@ -367,5 +367,46 @@ class MispFeedsModules:
             logger.error_log("MispObjectsModules", "delete_feed", None, f"Unexpected error : {str(e)}")
             return
  
- 
- 
+class MispAttributeProposalsModules:
+    def __init__(self):
+        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+        
+    async def attribute_proposals(self):
+        try:
+            obj = self.misp.attribute_proposals( False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispAttributeProposalsModules", "attribute_proposals", None, f"Unexpected error : {str(e)}")
+            return       
+    
+    async def get_attribute_proposal(self, attr_prp_id):
+        try:
+            obj = self.misp.get_attribute_proposal(attr_prp_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispAttributeProposalsModules", "get_attribute_proposal", None, f"Unexpected error : {str(e)}")
+            return
+
+    async def add_attribute_proposal(self, event_id, attr_prp_obj):
+        try:
+            obj = self.misp.add_attribute_proposal(event_id, attr_prp_obj, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispAttributeProposalsModules", "add_attribute_proposal", None, f"Unexpected error : {str(e)}")
+            return
+    
+    async def update_attribute_proposal(self, attr_prp_id, attr_prp_obj):
+        try:
+            obj = self.misp.update_attribute_proposal(attr_prp_id, attr_prp_obj, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispAttributeProposalsModules", "update_attribute_proposal", None, f"Unexpected error : {str(e)}")
+            return
+        
+    async def delete_attribute_proposal(self, attr_prp_id):
+        try:
+            obj = self.misp.delete_attribute_proposal(attr_prp_id)
+            return obj
+        except Exception as e:
+            logger.error_log("MispAttributeProposalsModules", "delete_attribute_proposal", None, f"Unexpected error : {str(e)}")
+            return    
