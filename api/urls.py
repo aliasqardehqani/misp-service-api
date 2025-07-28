@@ -2,6 +2,11 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
+    # ---------------------------------------Publish-API`s------------------------------------------
+    path('publish/', MISPPublishManagerAPI.as_view({'post': 'publish'}), name='publish'),
+    path('unpublish/', MISPPublishManagerAPI.as_view({'post': 'unpublish'}), name='unpublish'),
+    
+    # ---------------------------------------Event-API`s--------------------------------------------
     path('add-event/', MISPEventsAPI.as_view({'post': 'add_event'}), name='add-event'),
     path('get-event/', MISPEventsAPI.as_view({'post': 'get_event_list'}), name='get-event-list'),
     path('update-event/', MISPEventsAPI.as_view({'post': 'update_event'}), name='update-event'),

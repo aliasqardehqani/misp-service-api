@@ -12,12 +12,48 @@ from api.modules.misp_models_caller import (
     MispTagsModules,
     MispObjectsModules, 
     MispFeedsModules,
-    MispAttributeProposalsModules
+    MispAttributeProposalsModules, 
+    MispPublishManagerModules
 )
 
 from .logs import LoggerService
 
 logger = LoggerService()
+
+
+class MISPPublishManagerAPI(viewsets.ViewSet):
+    def __init__(self):
+        self.misp_class = MispPublishManagerModules()
+
+    @action(detail=False, methods=['post'])
+    def publish(self, request):
+        return async_to_sync(self._publish)(request)
+
+    @action(detail=False, methods=['post'])
+    def unpublish(self, request):
+        return async_to_sync(self._unpublish)(request)
+
+    async def _publish(self, request):
+        try:
+            event_id = request.data.get('event_id')
+            alert = request.data.get('alert')
+            obj = await self.misp_class.publish(event_id, alert)
+            return Response({"Message": "Publish Event By ID", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPPublishManagerAPI", "_publish", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _unpublish(self, request):
+        try:
+            event_id = request.data.get('event_id')
+            obj = await self.misp_class.unpublish(event_id)
+            return Response({"Message": "UnPublish Event By ID", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPPublishManagerAPI", "_unpublish", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class MISPEventsAPI(viewsets.ViewSet):
     def __init__(self):

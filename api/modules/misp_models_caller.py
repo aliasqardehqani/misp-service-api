@@ -8,7 +8,25 @@ from api.logs import LoggerService
 
 logger = LoggerService
 
-
+class MispPublishManagerModules:
+    def __init__(self):
+        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+    async def publish(self, event_id, alert: bool = False):
+        try:
+            publish = self.misp.publish(event_id, alert)
+            return publish
+        except Exception as e:
+            logger.error_log("MispPublishManagerModules", "publish", None, f"Unexpected error : {str(e)}")
+            return
+        
+    async def unpublish(self, event_id):
+        try:
+            publish = self.misp.unpublish(event_id)
+            return publish
+        except Exception as e:
+            logger.error_log("MispPublishManagerModules", "unpublish", None, f"Unexpected error : {str(e)}")
+            return
+        
 class MispEventModules:
     def __init__(self):
         self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
@@ -410,3 +428,6 @@ class MispAttributeProposalsModules:
         except Exception as e:
             logger.error_log("MispAttributeProposalsModules", "delete_attribute_proposal", None, f"Unexpected error : {str(e)}")
             return    
+        
+        
+        
