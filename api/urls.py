@@ -59,7 +59,7 @@ urlpatterns = [
     # ----------------------------------------Users-API`s--------------------------------------------
     path('add-user/', MISPUserManagementAPI.as_view({'post': 'add_user'}), name='add-user'),
     path('update-user/', MISPUserManagementAPI.as_view({'post': 'update_user'}), name='update-user'),
-    path('delete-feed/', MISPUserManagementAPI.as_view({'post': 'delete_user'}), name='delete-user'),
+    path('delete-user/', MISPUserManagementAPI.as_view({'post': 'delete_user'}), name='delete-user'),
     path('list-users/', MISPUserManagementAPI.as_view({'post': 'users'}), name='list-user'),
     path('get-user/', MISPUserManagementAPI.as_view({'post': 'get_user'}), name='get-user'),
 

@@ -715,7 +715,7 @@ class MISPUserManagementAPI(viewsets.ViewSet):
 
     @action(detail=False, methods=['post'])
     def get_user(self, request):
-        return async_to_sync(self._gget_user)(request)
+        return async_to_sync(self._get_user)(request)
 
     @action(detail=False, methods=['post'])
     def users(self, request):
@@ -729,8 +729,11 @@ class MISPUserManagementAPI(viewsets.ViewSet):
     async def _add_user(self, request):
         try:
             user_obj = request.data.get('User')
-            obj = await self.misp_class.add_user(request.data)
-            return Response({"Message": "User Added Success", "Data": obj}, status=status.HTTP_200_OK)
+            obj = await self.misp_class.add_user(user_obj)
+            if obj != 500:
+                return Response({"Message": "User Added Success", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         except Exception as e:
             logger.error_log("MISPUserManagementAPI", "_add_user", None, f"Unexpected error: {str(e)}")
@@ -738,11 +741,13 @@ class MISPUserManagementAPI(viewsets.ViewSet):
 
     async def _update_user(self, request):
         try:
-            from pymisp import MISPObject
             user_id = request.data.get('user_id')
-            user_obj = request.data.get('user_obj')
-            obj = await self.misp_class.update_user(user_id, user_obj.to_dict())
-            return Response({"Message": "User Updated Success", "Data": obj}, status=status.HTTP_200_OK)
+            user_obj = request.data.get('User')
+            obj = await self.misp_class.update_user(user_id, user_obj)
+            if obj != 500:
+                return Response({"Message": "User Updated Success", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         except Exception as e:
             logger.error_log("MISPUserManagementAPI", "_update_user", None, f"Unexpected error: {str(e)}")
