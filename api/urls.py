@@ -70,6 +70,15 @@ urlpatterns = [
     path('list-orgns/', MISPOrganisationAPI.as_view({'post': 'organisations'}), name='list-orgns'),
     path('get-orgns/', MISPOrganisationAPI.as_view({'post': 'get_orgns'}), name='get-orgns'),
 
+    # ----------------------------------------Note-API`s---------------------------------------------
+    path('add-note/', MISPNoteAPI.as_view({'post': 'add_note'}), name='add-note'),
+    path('update-note/', MISPNoteAPI.as_view({'post': 'update_note'}), name='update-note'),
+    # path('delete-note/', MISPNoteAPI.as_view({'post': 'delete_note'}), name='delete-note'),
+    path('get-note/', MISPNoteAPI.as_view({'post': 'get_note'}), name='get-note'),
+
 ]
+
+
+
 
 

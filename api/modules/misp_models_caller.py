@@ -1,5 +1,6 @@
 import asyncio
-from pymisp import PyMISP, MISPEvent, MISPAttribute
+import uuid
+from pymisp import *
 from django.conf import settings
 from pprint import pprint
 from datetime import datetime
@@ -519,4 +520,49 @@ class MispOrganisationModules:
         except Exception as e:
             logger.error_log("MispOrganisationModules", "delete_orgns", None, f"Unexpected error : {str(e)}")
             return
+        
+class MispNoteModules:
+    def __init__(self):
+        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+        
+
+    async def add_note(self, note_data: dict):
+        try:
+            note_obj = MISPNote()
+            note_obj.from_dict(**note_data)
+            obj = self.misp.add_note(note_obj, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispNoteModules", "add_note", None, f"Unexpected error : {str(e)}")
+            return 500
+        
+    async def update_note(self, note_id, note_data: dict):
+        try:
+            note_obj = MISPNote()
+            note_obj.from_dict(**note_data)
+            obj = self.misp.update_note(note_obj, note_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispOrganisationModules", "update_note", None, f"Unexpected error : {str(e)}")
+            return 500
+
+    async def get_note(self, note_uuid):
+        try:
+            obj = self.misp.get_note(note_uuid, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispNoteModules", "get_note", None, f"Unexpected error : {str(e)}")
+            return
+        
+    # async def delete_note(self, note_id):
+    #     try:
+    #         note_obj = self.misp.get_note(note_id, pythonify=True)
+
+    #         note = note_obj.get("Note").get('note')
+    #         if note:
+    #             obj = self.misp.delete_note(note)
+    #         return obj
+    #     except Exception as e:
+    #         logger.error_log("MispNoteModules", "delete_note", None, f"Unexpected error : {str(e)}")
+    #         return 500
         
