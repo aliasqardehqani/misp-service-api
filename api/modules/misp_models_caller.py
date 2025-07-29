@@ -1,5 +1,6 @@
 import asyncio
-from pymisp import PyMISP, MISPEvent, MISPAttribute
+import uuid
+from pymisp import *
 from django.conf import settings
 from pprint import pprint
 from datetime import datetime
@@ -475,4 +476,177 @@ class MispUserManagementModules:
             logger.error_log("MispUserManagementModules", "delete_user", None, f"Unexpected error : {str(e)}")
             return
  
+class MispOrganisationModules:
+    def __init__(self):
+        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
         
+    async def add_orgns(self, orgns_obj):
+        try:
+            obj = self.misp.add_organisation(orgns_obj, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispOrganisationModules", "add_orgns", None, f"Unexpected error : {str(e)}")
+            return 500
+        
+    async def update_orgns(self, orgns_id, orgns_obj):
+        try:
+            obj = self.misp.update_organisation(orgns_obj, orgns_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispOrganisationModules", "update_orgns", None, f"Unexpected error : {str(e)}")
+            return 500
+
+    async def get_orgns(self, orgns_obj):
+        try:
+            obj = self.misp.get_organisation(orgns_obj, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispOrganisationModules", "get_orgns", None, f"Unexpected error : {str(e)}")
+            return
+
+    async def organisations(self, scope: str = "local", search: str = None):
+        try:
+            obj = self.misp.organisations(scope, search, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispOrganisationModules", "organisations", None, f"Unexpected error : {str(e)}")
+            return      
+        
+        
+    async def delete_orgns(self, orgns_id):
+        try:
+            obj = self.misp.delete_organisation(orgns_id)
+            return obj
+        except Exception as e:
+            logger.error_log("MispOrganisationModules", "delete_orgns", None, f"Unexpected error : {str(e)}")
+            return
+        
+class MispNoteModules:
+    def __init__(self):
+        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+        
+
+    async def add_note(self, note_data: dict):
+        try:
+            note_obj = MISPNote()
+            note_obj.from_dict(**note_data)
+            obj = self.misp.add_note(note_obj, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispNoteModules", "add_note", None, f"Unexpected error : {str(e)}")
+            return 500
+        
+    async def update_note(self, note_id, note_data: dict):
+        try:
+            note_obj = MISPNote()
+            note_obj.from_dict(**note_data)
+            obj = self.misp.update_note(note_obj, note_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispOrganisationModules", "update_note", None, f"Unexpected error : {str(e)}")
+            return 500
+
+    async def get_note(self, note_uuid):
+        try:
+            obj = self.misp.get_note(note_uuid, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispNoteModules", "get_note", None, f"Unexpected error : {str(e)}")
+            return
+        
+class MispAddAnalystDataModules:
+    def __init__(self):
+        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+        
+
+    async def add_analyst_data(self, analyst_data: dict):
+        try:
+            method = analyst_data.get("method")
+            if "note" == method:
+                dt_obj = MISPNote()
+                dt_obj.from_dict(**analyst_data)
+                obj = self.misp.add_analyst_data(dt_obj, False)
+                return obj
+            elif "opinion" == method:
+                dt_obj = MISPOpinion()
+                dt_obj.from_dict(**analyst_data)
+                obj = self.misp.add_analyst_data(dt_obj, False)
+                return obj
+            elif "relationship" == method:
+                dt_obj = MISPRelationship()
+                dt_obj.from_dict(**analyst_data)
+                obj = self.misp.add_analyst_data(dt_obj, False)
+                return obj
+            else:
+                logger.error_log("MispAddAnalystDataModules", "add_analyst_data", None, f"Unexpected error : your request method not found")
+                return 500
+        except Exception as e:
+            logger.error_log("MispAddAnalystDataModules", "add_analyst_data", None, f"Unexpected error : {str(e)}")
+            return 500
+        
+    async def update_analyst_data(self, analyst_data: dict):
+        try:
+            analyst_data_id = analyst_data.get("id")
+            method = analyst_data.get("method")
+            if "note" == method:
+                dt_obj = MISPNote()
+                dt_obj.from_dict(**analyst_data)
+                obj = self.misp.update_analyst_data(dt_obj, analyst_data_id, False)
+                return obj
+            elif "opinion" == method:
+                dt_obj = MISPOpinion()
+                dt_obj.from_dict(**analyst_data)
+                obj = self.misp.update_analyst_data(dt_obj, analyst_data_id, False)
+                return obj
+            elif "relationship" == method:
+                dt_obj = MISPRelationship()
+                dt_obj.from_dict(**analyst_data)
+                obj = self.misp.update_analyst_data(dt_obj, analyst_data_id, False)
+                return obj
+            else:
+                logger.error_log("MispAddAnalystDataModules", "update_analyst_data", None, f"Unexpected error : your request method not found")
+                return 500
+        except Exception as e:
+            logger.error_log("MispAddAnalystDataModules", "update_analyst_data", None, f"Unexpected error : {str(e)}")
+            return 500
+        
+    async def delete_analyst_data(self, analyst_data: dict):
+        try:
+            analyst_data_id = analyst_data.get("id")
+            method = analyst_data.get("method")
+            if "note" == method:
+                # dt_obj = MISPNote()
+                # dt_obj.from_dict(**analyst_data)
+                # Check if the analyst data exists
+                existing = self.misp.get_analyst_data("2fcc620d-e43c-4d3c-ab2a-823d0bb7ef07", pythonify=True)
+                print(existing)
+                note = MISPNote()
+                note.uuid = analyst_data_id
+                obj = self.misp.delete_analyst_data(note)
+                return obj  
+            
+            elif "opinion" == method:
+                dt_obj = MISPOpinion()
+                dt_obj.from_dict(**analyst_data)
+                obj = self.misp.delete_analyst_data(dt_obj, analyst_data_id, False)
+                return obj
+            elif "relationship" == method:
+                dt_obj = MISPRelationship()
+                dt_obj.from_dict(**analyst_data)
+                obj = self.misp.delete_analyst_data(dt_obj, analyst_data_id, False)
+                return obj
+            else:
+                logger.error_log("MispAddAnalystDataModules", "delete_analyst_data", None, f"Unexpected error : your request method not found")
+                return 500
+        except Exception as e:
+            logger.error_log("MispAddAnalystDataModules", "delete_analyst_data", None, f"Unexpected error : {str(e)}")
+            return 500
+        
+    async def get_analyst_data(self, analyst_data):
+        try:
+            uuid = analyst_data.get("uuid")
+            obj = self.misp.get_analyst_data(uuid, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispAddAnalystDataModules", "get_analyst_data", None, f"Unexpected error : {str(e)}")
+            return 500

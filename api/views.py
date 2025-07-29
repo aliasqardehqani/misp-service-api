@@ -4,18 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from datetime import datetime
 from asgiref.sync import async_to_sync
-from api.modules.misp_models_caller import (
-    MispEventModules,
-    MispAttibutesModules,
-    MISPSearchModles,
-    MispEventReportModules,
-    MispTagsModules,
-    MispObjectsModules, 
-    MispFeedsModules,
-    MispAttributeProposalsModules, 
-    MispPublishManagerModules,
-    MispUserManagementModules
-)
+from api.modules.misp_models_caller import *
 
 from .logs import LoggerService
 
@@ -783,3 +772,223 @@ class MISPUserManagementAPI(viewsets.ViewSet):
         except Exception as e:
             logger.error_log("MISPUserManagementAPI", "_delete_user", None, f"Unexpected error: {str(e)}")
             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class MISPOrganisationAPI(viewsets.ViewSet):
+    def __init__(self):
+        self.misp_class = MispOrganisationModules()
+
+
+    @action(detail=False, methods=['post'])
+    def add_orgns(self, request):
+        return async_to_sync(self._add_orgns)(request)
+
+    @action(detail=False, methods=['post'])
+    def update_orgns(self, request):
+        return async_to_sync(self._update_orgns)(request)
+
+    @action(detail=False, methods=['post'])
+    def get_orgns(self, request):
+        return async_to_sync(self._get_orgns)(request)
+
+    @action(detail=False, methods=['post'])
+    def organisations(self, request):
+        return async_to_sync(self._organisations)(request)
+
+    @action(detail=False, methods=['post'])
+    def delete_orgns(self, request):
+        return async_to_sync(self._delete_orgns)(request)
+
+
+    async def _add_orgns(self, request):
+        try:
+            orgns_obj = request.data.get('Organisation')
+            obj = await self.misp_class.add_orgns(orgns_obj)
+            if obj != 500:
+                return Response({"Message": "Organisation Added Success", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPOrganisationAPI", "_add_orgns", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _update_orgns(self, request):
+        try:
+            orgns_id = request.data.get('orgns_id')
+            orgns_obj = request.data.get('Organisation')
+            obj = await self.misp_class.update_orgns(orgns_id, orgns_obj)
+            if obj != 500:
+                return Response({"Message": "Organisation Updated Success", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPOrganisationAPI", "_update_orgns", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _get_orgns(self, request):
+        try:
+            orgns_id = request.data.get('orgns_id')
+            obj = await self.misp_class.get_orgns(orgns_id)
+            return Response({"Message": "Get Organisation by ID", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPOrganisationAPI", "_get_orgns", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _organisations(self, request):
+        try:
+            scope = request.data.get('scope')
+            search = request.data.get('search')
+            obj = await self.misp_class.organisations(scope, search)
+            return Response({"Message": "Organisation list", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPOrganisationAPI", "_organisations", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _delete_orgns(self, request):
+        try:
+            orgns_id = request.data.get('orgns_id')
+            obj = await self.misp_class.delete_orgns(orgns_id)
+            return Response({"Message": "Organisation Deleted By ID", "Data": obj}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error_log("MISPOrganisationAPI", "_delete_orgns", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class MISPNoteAPI(viewsets.ViewSet):
+    def __init__(self):
+        self.misp_class = MispNoteModules()
+
+
+    @action(detail=False, methods=['post'])
+    def add_note(self, request):
+        return async_to_sync(self._add_note)(request)
+
+    @action(detail=False, methods=['post'])
+    def update_note(self, request):
+        return async_to_sync(self._update_note)(request)
+
+    @action(detail=False, methods=['post'])
+    def get_note(self, request):
+        return async_to_sync(self._get_note)(request)
+
+    @action(detail=False, methods=['post'])
+    def delete_note(self, request):
+        return async_to_sync(self._delete_note)(request)
+
+
+    async def _add_note(self, request):
+        try:
+            # note_obj = request.data.get('note')
+            obj = await self.misp_class.add_note(request.data)
+            if obj != 500:
+                return Response({"Message": "Note Added Success", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPNoteAPI", "_add_note", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _update_note(self, request):
+        try:
+            note_id = request.data.get('note_id')
+            # note_obj = request.data.get('Note')
+            obj = await self.misp_class.update_note(note_id, request.data)
+            if obj != 500:
+                return Response({"Message": "Note Updated Success", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPNoteAPI", "_update_note", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _get_note(self, request):
+        try:
+            note_id = request.data.get('note_id')
+            obj = await self.misp_class.get_note(note_id)
+            if obj != 500:
+                return Response({"Message": "Get Note by ID", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPNoteAPI", "_get_note", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class MISPAnalystDataAPI(viewsets.ViewSet):
+    def __init__(self):
+        self.misp_class = MispAddAnalystDataModules()
+
+
+    @action(detail=False, methods=['post'])
+    def add_analyst_data(self, request):
+        return async_to_sync(self._add_analyst_data)(request)
+
+    @action(detail=False, methods=['post'])
+    def update_analyst_data(self, request):
+        return async_to_sync(self._update_analyst_data)(request)
+
+    @action(detail=False, methods=['post'])
+    def delete_analyst_data(self, request):
+        return async_to_sync(self._delete_analyst_data)(request)
+
+
+    @action(detail=False, methods=['post'])
+    def get_analyst_data(self, request):
+        return async_to_sync(self._get_analyst_data)(request)
+
+
+
+    async def _add_analyst_data(self, request):
+        try:
+            obj = await self.misp_class.add_analyst_data(request.data)
+            if obj != 500:
+                return Response({"Message": "Analyst Data Added Success", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPAnalystDataAPI", "_add_analyst_data", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _update_analyst_data(self, request):
+        try:
+            obj = await self.misp_class.update_analyst_data(request.data)
+            if obj != 500:
+                return Response({"Message": "Analyst Data Updated Success", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPAnalystDataAPI", "_update_analyst_data", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _delete_analyst_data(self, request):
+        try:
+            obj = await self.misp_class.delete_analyst_data(request.data)
+            if obj != 500:
+                return Response({"Message": "Analyst Data Deleted Success", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPAnalystDataAPI", "_delete_analyst_data", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+   
+    async def _get_analyst_data(self, request):
+        try:
+            obj = await self.misp_class.get_analyst_data(request.data)
+            if obj != 500:
+                return Response({"Message": "Analyst Data Get by ID", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPAnalystDataAPI", "_get_analyst_data", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+

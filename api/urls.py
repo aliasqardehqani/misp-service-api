@@ -63,16 +63,25 @@ urlpatterns = [
     path('list-users/', MISPUserManagementAPI.as_view({'post': 'users'}), name='list-user'),
     path('get-user/', MISPUserManagementAPI.as_view({'post': 'get_user'}), name='get-user'),
 
+    # ----------------------------------------Organisation-API`s-------------------------------------
+    path('add-orgns/', MISPOrganisationAPI.as_view({'post': 'add_orgns'}), name='add-orgns'),
+    path('update-orgns/', MISPOrganisationAPI.as_view({'post': 'update_orgns'}), name='update-orgns'),
+    path('delete-orgns/', MISPOrganisationAPI.as_view({'post': 'delete_orgns'}), name='delete-orgns'),
+    path('list-orgns/', MISPOrganisationAPI.as_view({'post': 'organisations'}), name='list-orgns'),
+    path('get-orgns/', MISPOrganisationAPI.as_view({'post': 'get_orgns'}), name='get-orgns'),
+
+    # ----------------------------------------Note-API`s---------------------------------------------
+    path('add-note/', MISPNoteAPI.as_view({'post': 'add_note'}), name='add-note'),
+    path('update-note/', MISPNoteAPI.as_view({'post': 'update_note'}), name='update-note'),
+    # path('delete-note/', MISPNoteAPI.as_view({'post': 'delete_note'}), name='delete-note'),
+    path('get-note/', MISPNoteAPI.as_view({'post': 'get_note'}), name='get-note'),
+    
+    # ----------------------------------------Analyst-API`s------------------------------------------
+    path('add-analyst/', MISPAnalystDataAPI.as_view({'post': 'add_analyst_data'}), name='add-analyst'),
+    path('update-analyst/', MISPAnalystDataAPI.as_view({'post': 'update_analyst_data'}), name='update-analyst'),
+    path('delete-analyst/', MISPAnalystDataAPI.as_view({'post': 'delete_analyst_data'}), name='delete-analyst'),
+    path('get-analyst/', MISPAnalystDataAPI.as_view({'post': 'get_analyst_data'}), name='get-analyst'),
 ]
-
-
-
-
-
-
-
-
-
 
 
 
