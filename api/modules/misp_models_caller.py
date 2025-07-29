@@ -439,7 +439,7 @@ class MispUserManagementModules:
             return obj
         except Exception as e:
             logger.error_log("MispUserManagementModules", "add_user", None, f"Unexpected error : {str(e)}")
-            return
+            return 500
         
     async def update_user(self, user_id, user_obj):
         try:
@@ -447,7 +447,7 @@ class MispUserManagementModules:
             return obj
         except Exception as e:
             logger.error_log("MispUserManagementModules", "update_user", None, f"Unexpected error : {str(e)}")
-            return
+            return 500
 
     async def get_user(self, user_id):
         try:
