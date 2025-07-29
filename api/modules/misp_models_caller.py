@@ -475,4 +475,48 @@ class MispUserManagementModules:
             logger.error_log("MispUserManagementModules", "delete_user", None, f"Unexpected error : {str(e)}")
             return
  
+class MispOrganisationModules:
+    def __init__(self):
+        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+        
+    async def add_orgns(self, orgns_obj):
+        try:
+            obj = self.misp.add_organisation(orgns_obj, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispOrganisationModules", "add_orgns", None, f"Unexpected error : {str(e)}")
+            return 500
+        
+    async def update_orgns(self, orgns_id, orgns_obj):
+        try:
+            obj = self.misp.update_organisation(orgns_obj, orgns_id, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispOrganisationModules", "update_orgns", None, f"Unexpected error : {str(e)}")
+            return 500
+
+    async def get_orgns(self, orgns_obj):
+        try:
+            obj = self.misp.get_organisation(orgns_obj, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispOrganisationModules", "get_orgns", None, f"Unexpected error : {str(e)}")
+            return
+
+    async def organisations(self, scope: str = "local", search: str = None):
+        try:
+            obj = self.misp.organisations(scope, search, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispOrganisationModules", "organisations", None, f"Unexpected error : {str(e)}")
+            return      
+        
+        
+    async def delete_orgns(self, orgns_id):
+        try:
+            obj = self.misp.delete_organisation(orgns_id)
+            return obj
+        except Exception as e:
+            logger.error_log("MispOrganisationModules", "delete_orgns", None, f"Unexpected error : {str(e)}")
+            return
         

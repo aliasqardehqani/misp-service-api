@@ -63,18 +63,13 @@ urlpatterns = [
     path('list-users/', MISPUserManagementAPI.as_view({'post': 'users'}), name='list-user'),
     path('get-user/', MISPUserManagementAPI.as_view({'post': 'get_user'}), name='get-user'),
 
+    # ----------------------------------------Organisation-API`s-------------------------------------
+    path('add-orgns/', MISPOrganisationAPI.as_view({'post': 'add_orgns'}), name='add-orgns'),
+    path('update-orgns/', MISPOrganisationAPI.as_view({'post': 'update_orgns'}), name='update-orgns'),
+    path('delete-orgns/', MISPOrganisationAPI.as_view({'post': 'delete_orgns'}), name='delete-orgns'),
+    path('list-orgns/', MISPOrganisationAPI.as_view({'post': 'organisations'}), name='list-orgns'),
+    path('get-orgns/', MISPOrganisationAPI.as_view({'post': 'get_orgns'}), name='get-orgns'),
+
 ]
-
-
-
-
-
-
-
-
-
-
-
-
 
 
