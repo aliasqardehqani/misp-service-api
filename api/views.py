@@ -919,18 +919,76 @@ class MISPNoteAPI(viewsets.ViewSet):
             logger.error_log("MISPNoteAPI", "_get_note", None, f"Unexpected error: {str(e)}")
             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-    # async def _delete_note(self, request):
-    #     try:
-    #         note_id = request.data.get('note_id')
-    #         obj = await self.misp_class.delete_note(note_id)
-    #         if obj != 500:
-    #             return Response({"Message": "Note Deleted By ID", "Data": obj}, status=status.HTTP_200_OK)
-    #         else:
-    #             return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    #     except Exception as e:
-    #         logger.error_log("MISPNoteAPI", "_delete_note", None, f"Unexpected error: {str(e)}")
-    #         return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class MISPAnalystDataAPI(viewsets.ViewSet):
+    def __init__(self):
+        self.misp_class = MispAddAnalystDataModules()
 
 
+    @action(detail=False, methods=['post'])
+    def add_analyst_data(self, request):
+        return async_to_sync(self._add_analyst_data)(request)
+
+    @action(detail=False, methods=['post'])
+    def update_analyst_data(self, request):
+        return async_to_sync(self._update_analyst_data)(request)
+
+    @action(detail=False, methods=['post'])
+    def delete_analyst_data(self, request):
+        return async_to_sync(self._delete_analyst_data)(request)
+
+
+    @action(detail=False, methods=['post'])
+    def get_analyst_data(self, request):
+        return async_to_sync(self._get_analyst_data)(request)
+
+
+
+    async def _add_analyst_data(self, request):
+        try:
+            obj = await self.misp_class.add_analyst_data(request.data)
+            if obj != 500:
+                return Response({"Message": "Analyst Data Added Success", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPAnalystDataAPI", "_add_analyst_data", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _update_analyst_data(self, request):
+        try:
+            obj = await self.misp_class.update_analyst_data(request.data)
+            if obj != 500:
+                return Response({"Message": "Analyst Data Updated Success", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPAnalystDataAPI", "_update_analyst_data", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _delete_analyst_data(self, request):
+        try:
+            obj = await self.misp_class.delete_analyst_data(request.data)
+            if obj != 500:
+                return Response({"Message": "Analyst Data Deleted Success", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPAnalystDataAPI", "_delete_analyst_data", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+   
+    async def _get_analyst_data(self, request):
+        try:
+            obj = await self.misp_class.get_analyst_data(request.data)
+            if obj != 500:
+                return Response({"Message": "Analyst Data Get by ID", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPAnalystDataAPI", "_get_analyst_data", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

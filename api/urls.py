@@ -75,7 +75,12 @@ urlpatterns = [
     path('update-note/', MISPNoteAPI.as_view({'post': 'update_note'}), name='update-note'),
     # path('delete-note/', MISPNoteAPI.as_view({'post': 'delete_note'}), name='delete-note'),
     path('get-note/', MISPNoteAPI.as_view({'post': 'get_note'}), name='get-note'),
-
+    
+    # ----------------------------------------Analyst-API`s------------------------------------------
+    path('add-analyst/', MISPAnalystDataAPI.as_view({'post': 'add_analyst_data'}), name='add-analyst'),
+    path('update-analyst/', MISPAnalystDataAPI.as_view({'post': 'update_analyst_data'}), name='update-analyst'),
+    path('delete-analyst/', MISPAnalystDataAPI.as_view({'post': 'delete_analyst_data'}), name='delete-analyst'),
+    path('get-analyst/', MISPAnalystDataAPI.as_view({'post': 'get_analyst_data'}), name='get-analyst'),
 ]
 
 
