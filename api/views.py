@@ -991,4 +991,166 @@ class MISPAnalystDataAPI(viewsets.ViewSet):
             logger.error_log("MISPAnalystDataAPI", "_get_analyst_data", None, f"Unexpected error: {str(e)}")
             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class MISPGalaxyAPI(viewsets.ViewSet):
+    def __init__(self):
+        self.misp_class = MispGalaxyModules()
 
+
+    @action(detail=False, methods=['post'])
+    def galaxies(self, request):
+        return async_to_sync(self._galaxies)(request)
+
+    @action(detail=False, methods=['post'])
+    def get_galaxies(self, request):
+        return async_to_sync(self._get_galaxy)(request)
+    
+    @action(detail=False, methods=['post'])
+    def get_galaxy_cluster(self, request):
+        return async_to_sync(self._get_galaxy_cluster)(request)
+    
+    @action(detail=False, methods=['post'])
+    def add_galaxy_cluster(self, request):
+        return async_to_sync(self._add_galaxy_cluster)(request)
+
+    @action(detail=False, methods=['post'])
+    def update_galaxy_cluster(self, request):
+        return async_to_sync(self._update_galaxy_cluster)(request)
+
+
+    @action(detail=False, methods=['post'])
+    def publish_galaxy_cluster(self, request):
+        return async_to_sync(self._publish_galaxy_cluster)(request)
+
+    @action(detail=False, methods=['post'])
+    def delete_galaxy_cluster(self, request):
+        return async_to_sync(self._delete_galaxy_cluster)(request)
+
+    @action(detail=False, methods=['post'])
+    def search_galaxy(self, request):
+        return async_to_sync(self._search_galaxy)(request)
+
+    @action(detail=False, methods=['post'])
+    def search_galaxy_cluster(self, request):
+        return async_to_sync(self._search_galaxy_cluster)(request)
+
+    async def _galaxies(self, request):
+        try:
+            obj = await self.misp_class.galaxies()
+            if obj != 500:
+                return Response({"Message": "Galaxies list", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPGalaxyAPI", "_galaxies", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _get_galaxy(self, request):
+        try:
+            
+            obj = await self.misp_class.get_galaxy(request.data)
+            if obj != 500:
+                return Response({"Message": "Galaxies list By ID", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPGalaxyAPI", "_get_galaxy", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _get_galaxy_cluster(self, request):
+        try:
+            uuid = request.data.get("uuid")
+            obj = await self.misp_class.get_galaxy_cluster(uuid)
+            if obj != 500:
+                return Response({"Message": "Galaxies cluster list By ID", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPGalaxyAPI", "_get_galaxy_cluster", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _add_galaxy_cluster(self, request):
+        try:
+            galaxy_obj = request.data.get("galaxy_obj")
+            galaxy_cluster_obj = request.data.get("galaxy_cluster_obj")
+            
+            obj = await self.misp_class.add_galaxy_cluster(galaxy_obj, galaxy_cluster_obj)
+            if obj != 500:
+                return Response({"Message": "Galaxies added by cluster objects", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPGalaxyAPI", "_add_galaxy_cluster", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _update_galaxy_cluster(self, request):
+        try:
+            galaxy_cluster_obj = request.data.get("galaxy_cluster_obj")
+            
+            obj = await self.misp_class.update_galaxy_cluster(galaxy_cluster_obj)
+            if obj != 500:
+                return Response({"Message": "Galaxies updated by cluster objects", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPGalaxyAPI", "_update_galaxy_cluster", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _publish_galaxy_cluster(self, request):
+        try:
+            uuid = request.data.get("uuid")
+            obj = await self.misp_class.publish_galaxy_cluster(uuid)
+            if obj != 500:
+                return Response({"Message": "Galaxies cluster Publised By ID", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPGalaxyAPI", "_publish_galaxy_cluster", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    async def _delete_galaxy_cluster(self, request):
+        try:
+            uuid = request.data.get("uuid")
+            obj = await self.misp_class.delete_galaxy_cluster(uuid)
+            if obj != 500:
+                return Response({"Message": "Galaxies cluster deleted By ID", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPGalaxyAPI", "_delete_galaxy_cluster", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    async def _search_galaxy(self, request):
+        try:
+            value = request.data.get("value")
+            obj = await self.misp_class.search_galaxy(value)
+            if obj != 500:
+                return Response({"Message": f"Galaxies search for {value} ", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPGalaxyAPI", "_search_galaxy", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    async def _search_galaxy_cluster(self, request):
+        try:
+            galaxy_id = request.data.get("galaxy_id")
+            context = request.data.get("context")
+            searchall = request.data.get("searchall")
+
+            obj = await self.misp_class.search_galaxy_cluster(galaxy_id, context, searchall)
+            if obj != 500:
+                return Response({"Message": f"Galaxies cluster search in all fields with id  ", "Data": obj}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            logger.error_log("MISPGalaxyAPI", "_search_galaxy", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
