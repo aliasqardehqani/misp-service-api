@@ -1,0 +1,1794 @@
+{
+	"info": {
+		"_postman_id": "e5a2b70b-be75-4b5b-8b57-f7d1e501d210",
+		"name": "Misp in gateway",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27009798",
+		"_collection_link": "https://speeding-astronaut-150658.postman.co/workspace/Team-Workspace~33b1ea3b-d203-4827-8e9a-4a3d11b8bcc8/collection/27009798-e5a2b70b-be75-4b5b-8b57-f7d1e501d210?action=share&source=collection_link&creator=27009798"
+	},
+	"item": [
+		{
+			"name": "Events",
+			"item": [
+				{
+					"name": "GetEventWithID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"event_id\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/get-event/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"get-event",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateEvent",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"event_id\": 15,\n    \"info\": \"update quality\",\n    \"analysis\": 1, // 1 -> initial, 2 -> onginig, 3 -> completed\n    \"threat_level_id\": 3 // 1 -> High, 2 -> Medium, 3-> Low, 4-> Undefined\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/update-event/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"update-event",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Event",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"event_id\": 7\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/delete-event/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"delete-event",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List of Events",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/list-event/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"list-event",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddEvent",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"info\": \"This is new test from django app\",\n    \"analysis\": 1, // 1 -> initial, 2 -> onginig, 3 -> completed\n    \"threat_level_id\": 3 // 1 -> High, 2 -> Medium, 3-> Low, 4-> Undefined\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/add-event/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"add-event",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Attributes",
+			"item": [
+				{
+					"name": "Attributes lists",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/list-attr/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"list-attr",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Attribute",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"event_id\": 12,\n    \"category\": \"Network activity\",\n    \"type\": \"ip-src\",\n    \"value\": \"192.168.30.131\",\n    \"first_seen\": \"2025-07-20\",\n    \"last_seen\": \"2025-07-22\",\n    \"disable_correlation\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/add-attr/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"add-attr",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Attribute",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"attribute_id\": 1,\n    \"category\": \"Network activity\",\n    \"type\": \"ip-dst\",\n    \"value\": \"192.168.30.129\",\n    \"first_seen\": \"2025-07-20\",\n    \"last_seen\": \"2025-07-22\",\n    \"disable_correlation\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/update-attr/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"update-attr",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Attribute",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"attribute_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/delete-attr/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"delete-attr",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Attribute with ID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"attribute_id\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/get-attr/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"get-attr",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tags",
+			"item": [
+				{
+					"name": "Tags list",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/list-tag/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"list-tag",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Tag",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Tag-test-1\",\n    \"colour\": \"#FF0000\",\n    \"relationship_type\": null,\n    \"local\": true\n}   ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/add-tag/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"add-tag",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Tag",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tag_id\": 6,\n    \"name\": \"Tag-test-11\",\n    \"colour\": \"#008000\",\n    \"relationship_type\": null,\n    \"local\": false\n}   ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/update-tag/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"update-tag",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Tag",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tag_id\": 6\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/delete-tag/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"delete-tag",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Tag with ID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tag_id\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/get-tag/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"get-tag",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Feeds",
+			"item": [
+				{
+					"name": "Feeds list",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/list-feed/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"list-feed",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Feed",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"feed_obj\": {\n    \"name\": \"Example Feed\",\n    \"provider\": \"MISP\",\n    \"url\": \"https://example.com/feed\",\n    \"enabled\": true,\n    \"distribution\": 0, // 1 -> Your organisation only, 2 -> This community only, 3 -> Connected communities, 4 -> All communities, 5 -> Inherit from feed\n    \"settings\": \"{\\\"lookup_visible\\\":true,\\\"source_format\\\":\\\"misp\\\"}\"\n  }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/add-feed/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"add-feed",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Tag",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tag_id\": 6,\n    \"name\": \"Tag-test-11\",\n    \"colour\": \"#008000\",\n    \"relationship_type\": null,\n    \"local\": false\n}   ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/update-tag/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"update-tag",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Feed",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"feed_id\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/delete-feed/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"delete-feed",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Feed with ID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"feed_id\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/get-feed/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"get-feed",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Users list",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/list-users/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"list-users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"User\": {\n    \"email\": \"ali1@mamd.test\",\n    \"password\": \"VeryStrongPass123!\",\n    \"org_id\": 1,\n    \"role_id\": 3\n  }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/add-user/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"add-user",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": 4,\n    \"User\": {\n        \"email\": \"ali1@mamd223.test\",\n        \"password\": \"VeryStrongPass123!\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/update-user/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"update-user",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/delete-user/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"delete-user",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User with ID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": 5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/get-user/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"get-user",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Attribute Proposals",
+			"item": [
+				{
+					"name": "PRP list",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/list-proposal/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"list-proposal",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Proposal",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"event_id\": 8,\n    \"attr_prp_obj\": {\n        \"value\": \"8.8.8.8\",\n        \"type\": \"ip-dst\",\n        \"category\": \"Network activity\",\n        \"to_ids\": true,\n        \"comment\": \"Proposing a new IP as destination\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/add-attr-proposal/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"add-attr-proposal",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Proposal",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"attr_prp_id\": 2,\n    \"attr_prp_obj\": {\n        \"value\": \"1.1.1.1\",\n        \"type\": \"ip-dst\",\n        \"category\": \"Network activity\",\n        \"to_ids\": true,\n        \"comment\": \"Proposing a new IP as 33\"\n    }\n}   ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/update-proposal/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"update-proposal",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Proposal",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"attr_prp_id\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/delete-proposal/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"delete-proposal",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Proposal with ID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"attr_prp_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/get-proposal/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"get-proposal",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Objects",
+			"item": [
+				{
+					"name": "Add Objects",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"event_id\": \"15\",\n  \"name\": \"domain-ip\",\n  \"meta-category\": \"network\",\n  \"description\": \"Test domain and IP object\",\n  \"template_uuid\": \"some-uuid-here\",\n  \"template_version\": 1,\n  \"uuid\": \"generated-uuid\",\n  \"timestamp\": 1722108000,\n  \"comment\": \"Suspicious domain-IP combination\",\n  \"first_seen\": 1722108000,\n  \"last_seen\": 1722194400,\n  \"deleted\": false,\n  \"attributes\": [\n    {\n      \"object_relation\": \"domain\",\n      \"value\": \"example.com\"\n    },\n    {\n      \"object_relation\": \"ip\",\n      \"value\": \"8.8.8.8\"\n    }\n  ]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/add-obj/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"add-obj",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Objects",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"obj_id\": \"1\",\n  \"name\": \"domain-ip\",\n  \"meta-category\": \"network\",\n  \"description\": \"Test domain and IP object\",\n  \"template_uuid\": \"some-uuid-here\",\n  \"template_version\": 1,\n  \"uuid\": \"generated-uuid\",\n  \"timestamp\": 1722108000,\n  \"comment\": \"Suspicious domain-IP combination\",\n  \"first_seen\": 1722108000,\n  \"last_seen\": 1722194400,\n  \"deleted\": false,\n  \"attributes\": [\n    {\n      \"object_relation\": \"domain\",\n      \"value\": \"example.com\"\n    },\n    {\n      \"object_relation\": \"ip\",\n      \"value\": \"8.8.8.8\"\n    }\n  ]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/update-obj/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"update-obj",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Objects",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"obj_id\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/delete-obj/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"delete-obj",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Objects with ID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"obj_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/get-obj/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"get-obj",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "EventReport",
+			"item": [
+				{
+					"name": "Add event report",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"event_id\": 10,\n    \"name\": \"report-2\",\n    \"content\": \"This is not best explaine for network\",\n    \"timestamp\": 1753609206,\n    \"deleted\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/add-report/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"add-report",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update report event",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"report_id\": 12,\n    \"name\": \"report-1\",\n    \"content\": \"This is not best explaine for network\",\n    \"timestamp\": 1753609206,\n    \"deleted\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/update-report/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"update-report",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get report",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"report_id\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/get-reports/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"get-reports",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Report",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"report_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/delete-report/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"delete-report",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get reports list",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/get-reports/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"get-reports",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Publishs",
+			"item": [
+				{
+					"name": "Publish",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"event_id\": 12,\n    \"alert\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/publish/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"publish",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UnPublish",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"event_id\": 12\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/unpublish/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"unpublish",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Organisation",
+			"item": [
+				{
+					"name": "Orgns list",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/list-orgns/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"list-orgns",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Orgns",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"Organisation\": {\n    \"name\": \"Pehan\",\n    \"type\": \"ADMIN\",\n    \"nationality\": \"Iranian\",\n    \"description\": \"This is cyber secuirty company\",\n    \"created_by\": \"1\",\n    \"local\": true,\n    \"sector\": \"\"\n  }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/add-orgns/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"add-orgns",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Organs",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"orgns_id\": 2,\n    \"Organisation\": {\n        // \"name\": \"Pehan2\",\n        // \"type\": \"ADMIN\",\n        \"nationality\": \"United States of America\"\n        // \"description\": \"This is cyber secuirty company\",\n        // \"created_by\": \"1\",\n        // \"local\": true,\n        // \"sector\": \"\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/update-orgns/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"update-orgns",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Orgns",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"orgns_id\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/delete-orgns/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"delete-orgns",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Orgns with ID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"orgns_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/get-orgns/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"get-orgns",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Note",
+			"item": [
+				{
+					"name": "Add Notes",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Note\": {\n        \"note\": \"Here is new note223232523\",\n        \"language\": \"\",\n        \"object_uuid\": \"05b9cde9-3c5e-4737-8dac-1aab4e3be386\", //uuid is the attribute we need to add to the note\n        \"object_type\": \"Event\", \n        \"analyst_data_object_type\": null // Used in important places.\n    }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/add-note/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"add-note",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Note",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"note_id\": 1,\n    \"Note\": {\n        \"note\": \"Here is new note ----------------------------\",\n        \"language\": \"\",\n        \"object_uuid\": \"05b9cde9-3c5e-4737-8dac-1aab4e3be386\",\n        \"object_type\": \"Event\", \n        \"analyst_data_object_type\": null // Used in important places.\n    }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/update-note/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"update-note",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Note with ID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"note_id\": \"e8be146d-ee6c-448a-bb10-24b5f54c069e\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/get-note/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"get-note",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Note",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"method\": \"note\",\n    \"id\": \"2fcc620d-e43c-4d3c-ab2a-823d0bb7ef07\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/delete-analyst/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"delete-analyst",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "AnalystData",
+			"item": [
+				{
+					"name": "Add Analyst",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"method\": \"opinion\",\n    \"Opinion\": {\n        \"object_uuid\": \"05b9cde9-3c5e-4737-8dac-1aab4e3be386\",\n        \"object_type\": \"Attribute\",\n        \"opinion\": 75,\n        \"comment\": \"This attribute seems suspicious based on logs.\"\n    }\n}\n// {\n//   \"method\": \"relationship\",\n//   \"Relationship\": {\n//     \"object_uuid\": \"05b9cde9-3c5e-4737-8dac-1aab4e3be386\",\n//     \"object_type\": \"Event\",\n//     \"related_object_uuid\": \"52abe8cc-f47e-4558-aba5-939015ae057a\",\n//     \"related_object_type\": \"Attribute\",\n//     \"relationship_type\": \"corroborates\"\n//   }\n// }\n// {\n//     \"method\": \"note\",\n//     \"Note\": {\n//         \"note\": \"Here is new note223232523\",\n//         \"language\": \"\",\n//         \"object_uuid\": \"05b9cde9-3c5e-4737-8dac-1aab4e3be386\", //uuid is the attribute we need to add to the note\n//         \"object_type\": \"Event\", \n//         \"analyst_data_object_type\": null // Used in important places.\n//     }\n// }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/add-analyst/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"add-analyst",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Analyst",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "// {\n//     \"method\": \"opinion\",\n//     \"id\": 1,\n//     \"Opinion\": {\n//         \"object_uuid\": \"05b9cde9-3c5e-4737-8dac-1aab4e3be386\",\n//         \"object_type\": \"Attribute\",\n//         \"opinion\": 75,\n//         \"comment\": \"This attribute seems suspicious based on logs.--==-=-=-==-=\"\n//     }\n// }\n// --------------------------------------------------------------------------------------------\n// {\n//     \"method\": \"relationship\",\n//     \"id\": 1,\n//     \"Relationship\": {\n//         \"object_uuid\": \"05b9cde9-3c5e-4737-8dac-1aab4e3be386\",\n//         \"object_type\": \"Event\",\n//         \"related_object_uuid\": \"52abe8cc-f47e-4558-aba5-939015ae057a\",\n//         \"related_object_type\": \"Attribute\",\n//         \"relationship_type\": \"corroborates\"\n//     }\n// }\n// --------------------------------------------------------------------------------------------\n{\n    \"method\": \"note\",\n    \"id\": 4,\n    \"Note\": {\n        \"note\": \"Here is new edqfwegfewgwbwfgrg3e\",\n        \"language\": \"\",\n        \"object_uuid\": \"05b9cde9-3c5e-4737-8dac-1aab4e3be386\", //uuid is the attribute we need to add to the note\n        \"object_type\": \"Event\",\n        \"analyst_data_object_type\": null // Used in important places.\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/update-analyst/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"update-analyst",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Analyst",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"method\": \"note\",\n    \"id\": \"2fcc620d-e43c-4d3c-ab2a-823d0bb7ef07\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/delete-analyst/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"delete-analyst",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get analyst with ID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"uuid\": \"e8be146d-ee6c-448a-bb10-24b5f54c069e\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/get-analyst/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"get-analyst",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Galaxy",
+			"item": [
+				{
+					"name": "Galaxies list",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/galaxies/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"galaxies",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Galaxies list By UUID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"uuid\": \"20de4abf-f000-48ec-a929-3cdc5c2f3c23\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/get-galaxies/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"get-galaxies",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Galaxies Cluster list By UUID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"uuid\": \"b838744c-0a50-43d6-8e55-f04f73e446e9\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/get-galaxies-cluster/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"get-galaxies-cluster",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Publish Galaxies Cluster By UUID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"uuid\": \"b838744c-0a50-43d6-8e55-f04f73e446e9\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/publish-galaxy-cluster/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"publish-galaxy-cluster",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Galaxies Cluster By UUID Copy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"uuid\": \"b838744c-0a50-43d6-8e55-f04f73e446e9\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/delete-galaxy-cluster/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"delete-galaxy-cluster",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Galaxy Cluster",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"galaxy_obj\": \"20de4abf-f000-48ec-a929-3cdc5c2f3c23\",\n  \"galaxy_cluster_obj\": {\n    \"value\": \"APT BlueDragon\",\n    \"description\": \"A state-sponsored threat actor from East Asia targeting infrastructure.\",\n    \"distribution\": 1,\n    \"authors\": [\"Cyber Threat Intel Team\"],\n    \"meta\": {\n      \"synonyms\": [\"BlueDragon APT\", \"APT-X\"],\n      \"country\": [\"CN\"],\n      \"cfr-type-of-incident\": [\"state-actor\"]\n    }\n  }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/add-galaxies/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"add-galaxies",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Galaxy Cluster",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"galaxy_cluster_obj\": {\n    \"uuid\": \"22464104-e40f-4e6c-a53a-7eb0b9457113\",\n    \"value\": \"APT BlueDragon Updated\",\n    \"description\": \"Updated description: Threat actor from East Asia active in 2024-2025.\",\n    \"distribution\": 1,\n    \"authors\": [\"Cyber Threat Intel Team\", \"New Analyst\"],\n    \"meta\": {\n      \"synonyms\": [\"BlueDragon\", \"APT-X\", \"BlueDragon APT\"],\n      \"country\": [\"CN\"],\n      \"cfr-type-of-incident\": [\"espionage\", \"state-actor\"]\n    }\n  }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/update-galaxies/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"update-galaxies",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Galaxy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n    \"value\": \"id\" //Value is everything of galaxy strings, fields, values, uuid, id, e.g . . \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/search-galaxy/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"search-galaxy",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Galaxy Cluster",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"galaxy_id\": \"a90f2bb6-11e1-58a7-9962-ba37886720ec\", // Use uuid from a galaxy not galaxy cluster\n    \"context\": \"asd\", // The context must be one of all, default, custom, org, orgc, deleted\n    \"searchall\": \"Techniques\" // Search field should to be from galaxy object \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/search-galaxy-cluster/",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"search-galaxy-cluster",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Search",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"controller\": \"events\",\n    \"kwargs\": {\n        \"distribution\": \"1\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/search/",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"search",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "http://127.0.0.1:8000",
+			"type": "default"
+		}
+	]
+}
