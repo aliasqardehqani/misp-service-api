@@ -81,8 +81,18 @@ urlpatterns = [
     path('update-analyst/', MISPAnalystDataAPI.as_view({'post': 'update_analyst_data'}), name='update-analyst'),
     path('delete-analyst/', MISPAnalystDataAPI.as_view({'post': 'delete_analyst_data'}), name='delete-analyst'),
     path('get-analyst/', MISPAnalystDataAPI.as_view({'post': 'get_analyst_data'}), name='get-analyst'),
+    
+    # ----------------------------------------Galaxy-API`s------------------------------------------
+    path('galaxies/', MISPGalaxyAPI.as_view({'post': 'galaxies'}), name='galaxies'),
+    path('get-galaxies/', MISPGalaxyAPI.as_view({'post': 'get_galaxies'}), name='get-galaxies'),
+    path('get-galaxies-cluster/', MISPGalaxyAPI.as_view({'post': 'get_galaxy_cluster'}), name='get-galaxies-cluster'),
+    path('add-galaxies/', MISPGalaxyAPI.as_view({'post': 'add_galaxy_cluster'}), name='add-galaxies'),
+    path('update-galaxies/', MISPGalaxyAPI.as_view({'post': 'update_galaxy_cluster'}), name='update-galaxies'),
+    path('publish-galaxy-cluster/', MISPGalaxyAPI.as_view({'post': 'publish_galaxy_cluster'}), name='publish-galaxy-cluster'),
+    path('delete-galaxy-cluster/', MISPGalaxyAPI.as_view({'post': 'delete_galaxy_cluster'}), name='delete-galaxy-cluster'),
+    path('search-galaxy/', MISPGalaxyAPI.as_view({'post': 'search_galaxy'}), name='search-galaxy'),
+    path('search-galaxy-cluster/', MISPGalaxyAPI.as_view({'post': 'search_galaxy_cluster'}), name='search-galaxy-cluster'),
 ]
-
 
 
 

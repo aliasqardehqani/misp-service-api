@@ -650,3 +650,83 @@ class MispAddAnalystDataModules:
         except Exception as e:
             logger.error_log("MispAddAnalystDataModules", "get_analyst_data", None, f"Unexpected error : {str(e)}")
             return 500
+        
+class MispGalaxyModules:
+    def __init__(self):
+        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+        
+    async def add_galaxy_cluster(self, galaxy_obj, galaxy_cluster_obj):
+        try:
+            obj = self.misp.add_galaxy_cluster(galaxy_obj, galaxy_cluster_obj, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispGalaxyModules", "add_galaxy_cluster", None, f"Unexpected error : {str(e)}")
+            return 500
+    
+    async def update_galaxy_cluster(self, galaxy_cluster_obj):
+        try:
+            obj = self.misp.update_galaxy_cluster(galaxy_cluster_obj, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispGalaxyModules", "update_galaxy_cluster", None, f"Unexpected error : {str(e)}")
+            return 500
+        
+    async def get_galaxy_cluster(self, uuid):
+        try:
+            obj = self.misp.get_galaxy_cluster(uuid, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispGalaxyModules", "get_galaxy_cluster", None, f"Unexpected error : {str(e)}")
+            return 500
+        
+    async def galaxies(self):
+        try:
+            obj = self.misp.galaxies(False, False)
+            return obj
+        except Exception as e:
+            logger.error_log("MispGalaxyModules", "galaxies", None, f"Unexpected error : {str(e)}")
+            return 500
+
+    async def get_galaxy(self, gx_data):
+        try:
+            uuid = gx_data.get('uuid')
+            obj = self.misp.get_galaxy(uuid)
+            return obj
+        except Exception as e:
+            logger.error_log("MispGalaxyModules", "get_galaxy", None, f"Unexpected error : {str(e)}")
+            return 500
+
+    async def publish_galaxy_cluster(self, uuid):
+        try:
+            obj = self.misp.publish_galaxy_cluster(uuid)
+            return obj
+        except Exception as e:
+            logger.error_log("MispGalaxyModules", "publish_galaxy_cluster", None, f"Unexpected error : {str(e)}")
+            return 500
+
+    async def delete_galaxy_cluster(self, uuid):
+        try:
+            obj = self.misp.delete_galaxy_cluster(uuid, True)
+            return obj
+        except Exception as e:
+            logger.error_log("MispGalaxyModules", "delete_galaxy_cluster", None, f"Unexpected error : {str(e)}")
+            return 500
+
+    async def search_galaxy(self, value):
+        try:
+            obj = self.misp.search_galaxy(value)
+            return obj
+        except Exception as e:
+            logger.error_log("MispGalaxyModules", "search_galaxy", None, f"Unexpected error : {str(e)}")
+            return 500
+        
+    async def search_galaxy_cluster(self, galaxy_id, context, searchall):
+        try:
+            obj = self.misp.search_galaxy_clusters(galaxy_id, context, searchall)
+            return obj
+        except Exception as e:
+            logger.error_log("MispGalaxyModules", "search_galaxy_cluster", None, f"Unexpected error : {str(e)}")
+            return 500
+        
+        
+        
