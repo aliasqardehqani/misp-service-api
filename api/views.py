@@ -458,6 +458,10 @@ class MISPObjectsAPI(viewsets.ViewSet):
 
 
     async def _add_obj(self, request):
+        """
+        To create a new object, you need to get the event_id and attribute fields from the json input and
+        finally create a dictionary that populates the fields with the MISPObjects class from the PyMisp package.  
+        """
         try:
             from pymisp import MISPObject
             event_id = request.data.get('event_id')
