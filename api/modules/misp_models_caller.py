@@ -154,6 +154,7 @@ class MispEventModules:
             return
         
 class MispAttibutesModules:
+    '''Attribute add to a event. '''
     def __init__(self):
         self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
 
@@ -172,6 +173,28 @@ class MispAttibutesModules:
             return
 
     async def add_attr(self, event_id, value, category, type_val, first_seen, last_seen, disable_correlation=False):
+        """
+        Add a new attribute to a MISP event. These fields are typically used in the client API body.
+
+        Args:
+            event_id (int): ID of the MISP event to which the attribute will be added.
+            category (str): Attribute category. This must be a valid MISP category string.
+                For more details on categories and allowed values, refer to:
+                https://www.misp-project.org/datamodels/
+                
+            type (str): Type of the attribute (e.g., ip-src, domain, etc.).
+            value (str): The value depends on your selection in the category and its type. 
+                For example, if you select the Network activity category and the ip-src type, you should use the value 192.168.30.131.
+                
+            first_seen (str, optional): Posting time for Y-M-D format and.
+            last_seen (str, optional): Posting time for Y-M-D format and.
+            disable_correlation (bool, optional): Whether to disable correlation for this attribute.
+
+        Returns:
+            dict: Response from the MISP API after adding the attribute.
+        """
+        
+        
         try:
             first_seen_ts = int(datetime.strptime(first_seen, "%Y-%m-%d").timestamp())
             last_seen_ts = int(datetime.strptime(last_seen, "%Y-%m-%d").timestamp())
@@ -200,6 +223,27 @@ class MispAttibutesModules:
             return
 
     async def update_attribute(self, attribute_id, value, category, type_val, first_seen, last_seen, disable_correlation=False):
+        """
+        Update a attribute. These fields are typically used in the client API body.
+
+        Args:
+            attribute_id (int): ID of the attribute .
+            category (str): Attribute category. This must be a valid MISP category string.
+                For more details on categories and allowed values, refer to:
+                https://www.misp-project.org/datamodels/
+                
+            type (str): Type of the attribute (e.g., ip-src, domain, etc.).
+            value (str): The value depends on your selection in the category and its type. 
+                For example, if you select the Network activity category and the ip-src type, you should use the value 192.168.30.131.
+                
+            first_seen (str, optional): Posting time for Y-M-D format and.
+            last_seen (str, optional): Posting time for Y-M-D format and.
+            disable_correlation (bool, optional): Whether to disable correlation for this attribute.
+
+        Returns:
+            dict: Response from the MISP API after updating the attribute.
+        """
+        
         try:
             first_seen_ts = int(datetime.strptime(first_seen, "%Y-%m-%d").timestamp())
             last_seen_ts = int(datetime.strptime(last_seen, "%Y-%m-%d").timestamp())
@@ -227,6 +271,13 @@ class MispAttibutesModules:
             return
         
     async def delete_attribute(self, attribute_id):
+        """
+        Delete a attribute . These fields are typically used in the client API body.
+
+        Args:
+            attribute_id (int): ID of the attribute .
+        """
+        
         try:
             deleted_obj = self.misp.delete_attribute(attribute=attribute_id, hard= False)
             return deleted_obj
@@ -234,6 +285,12 @@ class MispAttibutesModules:
             logger.error_log("MispEventModules", "delete_attr", None, f"Unexpected error : {str(e)}")
 
     async def get_attribute(self, attribute_id):
+        """
+        Get a attribute information with an ID . These fields are typically used in the client API body.
+
+        Args:
+            attribute_id (int): ID of the attribute .
+        """
         try:
             obj = self.misp.get_attribute(attribute=attribute_id, pythonify=False)
             return obj
@@ -249,9 +306,12 @@ class MISPSearchModles:
         """
         Perform a flexible search in MISP with optional parameters.
 
-        :param controller: One of 'events', 'attributes', or 'objects'.
-        :param kwargs: Optional search filters (e.g. type_attribute, category, tags, etc.).
-        :return: Search result from MISP, or None if an error occurs.
+        Args:
+            controller: One of 'events', 'attributes', or 'objects'.
+            kwargs: Optional search filters (e.g. type_attribute, category, tags, etc.).
+            
+        Returns: 
+            dict: Search result from MISP, or None if an error occurs.
         """
         if controller not in ['events', 'attributes', 'objects']:
             raise ValueError("Controller must be one of: 'events', 'attributes', 'objects'.")
@@ -278,15 +338,46 @@ class MispEventReportModules:
             logger.error_log("MispEventReportModules", "get_event_reports", None, f"Unexpected error : {str(e)}")
             return
 
-    async def get_event_reports(self, report_id):
+    async def add_event_report(self, event_id, report_data):
+        """
+        Add a report to a MISP event.
+
+        Args:
+            event_id (int): ID of the MISP event to which the report will be attached.
+            report_data (dict): Dictionary containing report details:
+                - name (str): Title or name of the report.
+                - content (str): The full text or body of the report.
+                - timestamp (str): Time the report was created (in ISO 8601 format or UNIX timestamp).
+                - deleted (bool): Whether the report is marked as deleted.
+
+        Returns:
+            dict: Response from the MISP API after adding the report.
+        """
+        
         try:
-            obj = self.misp.get_event_reports(report_id, False)
+            obj = self.misp.add_event_report(event_id, report_data, False)
+            
             return obj
         except Exception as e:
-            logger.error_log("MispEventReportModules", "get_event_report", None, f"Unexpected error : {str(e)}")
+            logger.error_log("MispEventReportModules", "update_event_report", None, f"Unexpected error : {str(e)}")
             return
-
+    
     async def update_event_report(self, report_data, report_id):
+        """
+        Update a report to a ReportID.
+
+        Args:
+            report_id (int): ID of the report.
+            report_data (dict): Dictionary containing report details:
+                - name (str): Title or name of the report.
+                - content (str): The full text or body of the report.
+                - timestamp (str): Time the report was created (in ISO 8601 format or UNIX timestamp).
+                - deleted (bool): Whether the report is marked as deleted.
+
+        Returns:
+            dict: Response from the MISP API after updating the report.
+        """
+        
         try:
             obj = self.misp.update_event_report(report_data, report_id, False)
             return obj
@@ -295,6 +386,12 @@ class MispEventReportModules:
             return
         
     async def delete_event_report(self, report_id):
+        """
+        Delete a report to a ReportID.
+
+        Args:
+            report_id (int): ID of the report.
+        """
         try:
             obj = self.misp.delete_event_report(report_id, False)
             return obj
