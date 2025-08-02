@@ -10,9 +10,17 @@ from api.logs import LoggerService
 logger = LoggerService
 
 class MispPublishManagerModules:
+    '''Holds configuration for publishing a MISP event.'''
     def __init__(self):
         self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
     async def publish(self, event_id, alert: bool = False):
+        '''
+        Publishing event with eventID
+        
+        Args:
+            event_id (int) : an id of event we want to publish
+            alert (bool) : a notification send to all users atfer publishing
+        '''
         try:
             publish = self.misp.publish(event_id, alert)
             return publish
@@ -29,6 +37,7 @@ class MispPublishManagerModules:
             return
         
 class MispEventModules:
+    '''Api`s to crud action for an event'''
     def __init__(self):
         self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
 
@@ -45,6 +54,15 @@ class MispEventModules:
             return
 
     async def add_event(self, info: str, analysis: int, threat_level_id: int):
+        '''
+        A new event is added, 3 fields are received by the user client with the API and the other fields are filled with code.
+        
+        Args:
+            info (str): General information about the event.
+            analysis (int):  1 -> initial, 2 -> onginig, 3 -> completed
+            threat_level_id (int): ID representing the event's threat level. 1 -> High, 2 -> Medium, 3-> Low, 4-> Undefined
+
+        '''
         event = {
             'info': info,
             'analysis': analysis,
@@ -61,6 +79,16 @@ class MispEventModules:
             return
 
     async def update_event(self, event_id: int, info: str, analysis: int, threat_level_id: int):
+        '''
+        Update an event by args 
+        
+        Args:
+            event_id (int)
+            info (str): General information about the event.
+            analysis (int):  1 -> initial, 2 -> onginig, 3 -> completed
+            threat_level_id (int): ID representing the event's threat level. 1 -> High, 2 -> Medium, 3-> Low, 4-> Undefined
+
+        '''
         try:
             event = await asyncio.to_thread(self.misp.get_event, event_id, pythonify=True)
 
@@ -83,6 +111,12 @@ class MispEventModules:
             return
 
     async def delete_event(self, event_id: int):
+        '''
+        Delete an event by eventID
+        
+        Args:
+            event_id (int)
+        '''
         try:
             report = await asyncio.to_thread(self.misp.delete_event, event_id)
             return report
@@ -91,6 +125,12 @@ class MispEventModules:
             return
         
     async def get_event(self, event_id):
+        '''
+        Get an event by eventID
+        
+        Args:
+            event_id (int)
+        '''
         try:
             pprint(self.event)
             report = self.misp.get_event(
@@ -103,6 +143,7 @@ class MispEventModules:
         except Exception as e:
             logger.error_log("MispEventModules", "delete_event", None, f"Unexpected error : {str(e)}")
             return
+    
     async def events_list(self):
         try:
             events = self.misp.events(pythonify=False)
