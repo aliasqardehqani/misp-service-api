@@ -62,6 +62,7 @@ urlpatterns = [
     path('delete-user/', MISPUserManagementAPI.as_view({'post': 'delete_user'}), name='delete-user'),
     path('list-users/', MISPUserManagementAPI.as_view({'post': 'users'}), name='list-user'),
     path('get-user/', MISPUserManagementAPI.as_view({'post': 'get_user'}), name='get-user'),
+    path('add-auth-key/', MISPUserManagementAPI.as_view({'post': 'add_auth_key'}), name='add-auth-key'),
 
     # ----------------------------------------Organisation-API`s-------------------------------------
     path('add-orgns/', MISPOrganisationAPI.as_view({'post': 'add_orgns'}), name='add-orgns'),

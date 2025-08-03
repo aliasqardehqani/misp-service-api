@@ -1,4 +1,6 @@
 import asyncio
+import os
+
 import uuid
 from pymisp import *
 from django.conf import settings
@@ -9,10 +11,48 @@ from api.logs import LoggerService
 
 logger = LoggerService
 
+
+misp_instance: PyMISP | None = None 
+
+class MISPAPIConnection:
+    def __init__(self, user_id: int):
+        """
+        Initialize connection with MISP using auth key of the given user ID.
+        If the key is not found, it falls back to user_id=1.
+        """
+        key = self.load_auth_key(user_id)
+
+        if key is None:
+            logger.error_log("MISPAPIConnection", "__init__", f"No key found for user {user_id}, falling back to user 1", None)
+            key = self.load_auth_key(1)
+            if key is None:
+                raise ValueError("No auth key found for fallback user_id=1.")
+
+        misp_instance = PyMISP(settings.MISP_URL, key, ssl=False, debug=False)
+        self.misp = misp_instance 
+        
+    def load_auth_key(self, user_id: int, file_path: str = "auth.key") -> str | None:
+        """
+        Load auth key from file for a given user_id.
+        Returns None if not found.
+        """
+        try:
+            if not os.path.exists(file_path):
+                return None
+            with open(file_path, "r") as f:
+                for line in f:
+                    if line.startswith(f"{user_id}:"):
+                        return line.strip().split(":", 1)[1].strip()
+        except Exception as e:
+            logger.error_log("MISPAPIConnection", "load_auth_key", None, f"Failed to load auth key: {str(e)}")
+        return None
+    
+    
 class MispPublishManagerModules:
     '''Holds configuration for publishing a MISP event.'''
-    def __init__(self):
-        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+    def __init__(self, user_id: int = 1):
+        self.api_conn = MISPAPIConnection(user_id)
+        self.misp = self.api_conn.misp
     async def publish(self, event_id, alert: bool = False):
         '''
         Publishing event with eventID
@@ -38,8 +78,9 @@ class MispPublishManagerModules:
         
 class MispEventModules:
     '''Api`s to crud action for an event'''
-    def __init__(self):
-        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+    def __init__(self, user_id: int = 1):
+        self.api_conn = MISPAPIConnection(user_id)
+        self.misp = self.api_conn.misp
 
         self.event = MISPEvent()
         self.tehran_tz = ZoneInfo('Asia/Tehran')
@@ -155,8 +196,9 @@ class MispEventModules:
         
 class MispAttibutesModules:
     '''Attribute add to a event. '''
-    def __init__(self):
-        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+    def __init__(self, user_id: int = 1):
+        self.api_conn = MISPAPIConnection(user_id)
+        self.misp = self.api_conn.misp
 
         self.event = MISPEvent()
         self.attr = MISPAttribute()
@@ -299,8 +341,9 @@ class MispAttibutesModules:
             return
 
 class MISPSearchModles:
-    def __init__(self):
-        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+    def __init__(self, user_id: int = 1):
+        self.api_conn = MISPAPIConnection(user_id)
+        self.misp = self.api_conn.misp
 
     async def search_misp(self, controller: str, kwargs: None):
         """
@@ -327,8 +370,9 @@ class MISPSearchModles:
             return None
 
 class MispEventReportModules:
-    def __init__(self):
-        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+    def __init__(self, user_id: int = 1):
+        self.api_conn = MISPAPIConnection(user_id)
+        self.misp = self.api_conn.misp
         
     async def get_event_reports(self, report_id):
         """
@@ -406,8 +450,9 @@ class MispEventReportModules:
             return
 
 class MispTagsModules:
-    def __init__(self):
-        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+    def __init__(self, user_id: int = 1):
+        self.api_conn = MISPAPIConnection(user_id)
+        self.misp = self.api_conn.misp
         
     async def add_tag(self, tag_report):
         """
@@ -491,8 +536,9 @@ class MispTagsModules:
             return
         
 class MispObjectsModules:
-    def __init__(self):
-        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+    def __init__(self, user_id: int = 1):
+        self.api_conn = MISPAPIConnection(user_id)
+        self.misp = self.api_conn.misp
         
     async def add_obj(self, event_id, misp_object):
         """
@@ -592,8 +638,9 @@ class MispObjectsModules:
             return
         
 class MispFeedsModules:
-    def __init__(self):
-        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+    def __init__(self, user_id: int = 1):
+        self.api_conn = MISPAPIConnection(user_id)
+        self.misp = self.api_conn.misp
         
     async def add_feed(self, feed_obj):
         """
@@ -691,10 +738,11 @@ class MispFeedsModules:
         except Exception as e:
             logger.error_log("MispObjectsModules", "delete_feed", None, f"Unexpected error : {str(e)}")
             return
- 
+
 class MispAttributeProposalsModules:
-    def __init__(self):
-        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+    def __init__(self, user_id: int = 1):
+        self.api_conn = MISPAPIConnection(user_id)
+        self.misp = self.api_conn.misp
         
     async def attribute_proposals(self):
         """Proposals all list ."""
@@ -783,8 +831,10 @@ class MispAttributeProposalsModules:
             return    
         
 class MispUserManagementModules:
-    def __init__(self):
-        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+    def __init__(self, user_id: int = 1):
+        self.api_conn = MISPAPIConnection(user_id)
+        self.misp = self.api_conn.misp
+        
         
     async def add_user(self, user_obj):
         """
@@ -796,7 +846,7 @@ class MispUserManagementModules:
                 - password (str): Password for the new user account.
                 - org_id (int): ID of the organization the user belongs to.
                 - role_id (int): ID of the role assigned to the user 
-                                 (e.g., 1 = Site Admin, 2 = Org Admin, 3 = User, etc.).
+                                (e.g., 1 = Site Admin, 2 = Org Admin, 3 = User, etc.).
         Returns:
             dict: Response from the MISP API after creating the user.
         """
@@ -848,7 +898,6 @@ class MispUserManagementModules:
             logger.error_log("MispUserManagementModules", "users", None, f"Unexpected error : {str(e)}")
             return      
         
-        
     async def delete_user(self, user_id):
         """
         delete a user .
@@ -862,10 +911,66 @@ class MispUserManagementModules:
         except Exception as e:
             logger.error_log("MispUserManagementModules", "delete_user", None, f"Unexpected error : {str(e)}")
             return
- 
+
+    async def add_auth_key(self, user_id: int):
+        """
+        Create or update auth key for a MISP user and store in auth.key file.
+        
+        Args:
+            user_id (int): ID of the user.
+            
+        Returns:
+            str: The new auth key, or 500 on error.
+        """
+        try:
+            new_key = self.misp.get_new_authkey(user_id)
+            updated = False
+            lines = []
+
+            if os.path.exists("auth.key"):
+                try:
+                    with open("auth.key", 'r') as f:
+                        lines = f.readlines()
+                except Exception as e:
+                    logger.error_log("MispUserManagementModules", "add_auth_key", None, f"Read error: {str(e)}")
+                    return 500
+
+            # Open the file for writing (overwrite with updated content)
+            try:
+                with open("auth.key", 'w') as f:
+                    for line in lines:
+                        if line.startswith("1:"):
+                            f.write(line)
+                            continue
+
+                        if line.startswith(f"{user_id}:"):
+                            if user_id != 1:
+                                f.write(f"{user_id}: {new_key}\n")
+                                updated = True
+                            else:
+                                f.write(line)
+                            continue
+
+                        f.write(line)
+
+                    if not updated and user_id != 1:
+                        f.write(f"{user_id}: {new_key}\n")
+
+
+            except Exception as e:
+                logger.error_log("MispUserManagementModules", "add_auth_key", None, f"Write error: {str(e)}")
+                return 500
+
+            return new_key
+
+        except Exception as e:
+            logger.error_log("MispUserManagementModules", "add_auth_key", None, f"Unexpected error: {str(e)}")
+            return 500
+
 class MispOrganisationModules:
-    def __init__(self):
-        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+    def __init__(self, user_id: int = 1):
+        self.api_conn = MISPAPIConnection(user_id)
+        self.misp = self.api_conn.misp
         
     async def add_orgns(self, orgns_obj):
         """
@@ -934,7 +1039,7 @@ class MispOrganisationModules:
         except Exception as e:
             logger.error_log("MispOrganisationModules", "organisations", None, f"Unexpected error : {str(e)}")
             return      
-          
+        
     async def delete_orgns(self, orgns_id):
         """
         Update an organisation .
@@ -950,8 +1055,9 @@ class MispOrganisationModules:
             return
         
 class MispNoteModules:
-    def __init__(self):
-        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+    def __init__(self, user_id: int = 1):
+        self.api_conn = MISPAPIConnection(user_id)
+        self.misp = self.api_conn.misp
         
 
     async def add_note(self, note_data: dict):
@@ -1021,8 +1127,9 @@ class MispNoteModules:
             return
         
 class MispAddAnalystDataModules:
-    def __init__(self):
-        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+    def __init__(self, user_id: int = 1):
+        self.api_conn = MISPAPIConnection(user_id)
+        self.misp = self.api_conn.misp
         
 
     async def add_analyst_data(self, analyst_data: dict):
@@ -1223,8 +1330,9 @@ class MispAddAnalystDataModules:
             return 500
         
 class MispGalaxyModules:
-    def __init__(self):
-        self.misp = PyMISP(settings.MISP_URL, settings.MISP_KEY, ssl=False, debug=False)
+    def __init__(self, user_id: int = 1):
+        self.api_conn = MISPAPIConnection(user_id)
+        self.misp = self.api_conn.misp
         
     async def add_galaxy_cluster(self, galaxy_obj, galaxy_cluster_obj):
         """
@@ -1358,7 +1466,7 @@ class MispGalaxyModules:
             galaxy_id () : Use uuid from a galaxy not galaxy cluster
             context () : The context must be one of all, default, custom, org, orgc, deleted
             searchall () :  Search field should to be from galaxy object 
-          """
+        """
         try:
             obj = self.misp.search_galaxy_clusters(galaxy_id, context, searchall)
             return obj
@@ -1366,5 +1474,5 @@ class MispGalaxyModules:
             logger.error_log("MispGalaxyModules", "search_galaxy_cluster", None, f"Unexpected error : {str(e)}")
             return 500
         
-        
+            
         

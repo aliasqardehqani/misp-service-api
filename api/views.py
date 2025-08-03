@@ -718,6 +718,9 @@ class MISPUserManagementAPI(viewsets.ViewSet):
     def delete_user(self, request):
         return async_to_sync(self._delete_user)(request)
 
+    @action(detail=False, methods=['post'])
+    def add_auth_key(self, request):
+        return async_to_sync(self._add_auth_key)(request)
 
     async def _add_user(self, request):
         try:
@@ -775,6 +778,21 @@ class MISPUserManagementAPI(viewsets.ViewSet):
 
         except Exception as e:
             logger.error_log("MISPUserManagementAPI", "_delete_user", None, f"Unexpected error: {str(e)}")
+            return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    async def _add_auth_key(self, request):
+        try:
+            user_id = request.data.get('user_id')
+            if not user_id:
+                logger.error_log("MISPUserManagementAPI","_add_auth_key", "User ID is required field", None)
+            
+            auth_key = await self.misp_class.add_auth_key(user_id)
+            if auth_key != 500:
+                return Response({"Message": "User Key Created", "Data": auth_key}, status=status.HTTP_200_OK)
+            else:
+                return Response({"Message": "You got an error", "Error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            logger.error_log("MISPUserManagementAPI", "_add_auth_key", None, f"Unexpected error: {str(e)}")
             return Response({"error": "An unexpected error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class MISPOrganisationAPI(viewsets.ViewSet):
