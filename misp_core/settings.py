@@ -129,4 +129,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Misp url and key
 MISP_URL = 'https://192.168.30.131' 
-MISP_KEY = 'EhzIj5MGkcYLzxrxpmAYZSdqkidTennNnPnQ1VnU'
+# MISP_KEY = 'J8cJEuGjn3qitmr21hnR8Av5RNBpUcMNsBxEKdUO'
